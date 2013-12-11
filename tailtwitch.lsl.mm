@@ -24,10 +24,10 @@ list choice = ["Cute","Adult"];
 string owner; // Needed for owner identification
 integer lock = FALSE; // Boolean for locking capability
 integer rand; // Required for random menu channel (you really want this)
-integer chan; // Required for channel reference.
-string toucher; // Required to re-use the name of who is touching the tail
-integer listener; // Required for the listener.
-key dk; // a key, obviously. Stands for DetectedKey. used with the touch function.
+integer channelDialog; // Required for channel reference.
+string touchername; // Required to re-use the name of who is touching the tail
+integer listen_id; // Required for the listener.
+key toucherkey; // This will be set to the toucher's key. Used for user detection.
 string originalName; // Used to avoid having unnamed objects in the list of attacjed stuff in your viewer
 
 // Automagical Ending fixer //
@@ -38,37 +38,9 @@ string gender = "him";
 string gender2 = "his";
 
 
-/////////////////////////////////
-////// TAIL TWITCH  STUFF //////
-///////////////////////////////
-
-rotation t1 = <0.00000, 0.00000, 0.09587, 0.99539>;
-rotation t2;
-float j;
 twitch()
 {
-    rotation rot = llGetLocalRot();
-    integer i;
-    j = llGetTime() + 0.08;
-    while(j > llGetTime());
-    llSetLinkPrimitiveParamsFast(LINK_THIS, [PRIM_ROTATION, rot/t1]);
-    j = llGetTime() + 0.08;
-    while(j > llGetTime());
-    llSetLinkPrimitiveParamsFast(LINK_THIS, [PRIM_ROTATION, rot]);
-    j = llGetTime() + 0.08;
-    while(j > llGetTime());
-    llSetLinkPrimitiveParamsFast(LINK_THIS, [PRIM_ROTATION, rot/t2]);
-    j = llGetTime() + 0.08;
-    while(j > llGetTime());
-    llSetLinkPrimitiveParamsFast(LINK_THIS, [PRIM_ROTATION, rot]);
-}
-rotation flipRotT(rotation oldRot)
-{
-    vector up = llRot2Up(oldRot);
-    vector fwd = llRot2Fwd(oldRot);
-    up.y*=-1;
-    fwd.y*=-1;
-    return llAxes2Rot(fwd,up%fwd,up);
+    llMessageLinked(LINK_THIS, 0, "twitchplz", "");
 }
 
 //////////////////////////////////////
@@ -107,28 +79,25 @@ default
          //llSetMemoryLimit(21504);
         // Menu stuff
         originalName = llGetObjectName();
-        chan = 100 + (integer)llFrand(20000);
+        channelDialog = -1 - (integer)("0x" + llGetSubString( (string)llGetKey(), -7, -1) );
         setEnding();
-        // Twitch stuff
-        llSetTimerEvent(1);
-        t2 = flipRotT(t1);
     }
 
     touch_start(integer total_number)
     {   twitch();
-        toucher = llGetDisplayName(llDetectedKey(0));
-        listener=llListen(chan,"","","");
-        toucher = llGetDisplayName(llDetectedKey(0));
-        dk = llDetectedKey(0);
-        if(dk == llGetOwner())
+        llSetTimerEvent(15);
+        touchername = llGetDisplayName(llDetectedKey(0));
+        listen_id = llListen(channelDialog, "", toucherkey, "");
+        toucherkey = llDetectedKey(0);
+        if(toucherkey == llGetOwner())
         {
-            llDialog(dk,"Change Tail option,",list_owner,chan);
+            llDialog(toucherkey,"\nChange Tail option",list_owner,channelDialog);
         } else if(lock == FALSE){
 
-            llOwnerSay("Your tail is being touched by " + toucher);
-            llDialog(dk,"Would you like to play cute or hot with "+owner+"'s tail?",choice,chan);}
+            llOwnerSay("Your tail is being touched by " + touchername);
+            llDialog(toucherkey,"\nWould you like to play cute or hot with "+owner+"'s tail?",choice,channelDialog);}
         else{
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
     }
     listen(integer c, string n, key i, string m)
@@ -139,49 +108,49 @@ default
         // tail commands
         if(m2 == "gender")
         {
-            llDialog(dk,"Sausage or Tacos?",["Sausage","Tacos"],chan);
+            llDialog(toucherkey,"Sausage or Tacos?",["Sausage","Tacos"],channelDialog);
         }
         if(m2 == "tacos")
         {
             gender = "her";
             gender2 = "her";
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             debug("gender set to female");
         }
         if(m2 == "sausage")
         {
             gender = "him";
             gender2 = "his";
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             debug("gender set to male");
         }
     
         if(m2 == "cute")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             state CuteMenu;
 
         }
         if(m2 == "adult")
         {
             
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             state Adult;
         }
         if(m2 == "rest")
         {
-            llDialog(dk,"Would you like to play cute or hot with "+owner+"'s tail?",choice,chan);
+            llDialog(toucherkey,"Would you like to play cute or hot with "+owner+"'s tail?",choice,channelDialog);
         }
         if(m2 == "lock")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             lock = TRUE;
             llOwnerSay("Locked");
             
         }
         if(m2 == "unlock")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             lock = FALSE;
             llOwnerSay("Unlocked");
             
@@ -190,7 +159,7 @@ default
         // ------------------------------------------------------------------ //
         if(m2 == "waggle")
         {
-        llListenRemove(listener);
+        llListenRemove(listen_id);
         llSetObjectName("");
         llSay(0," "+n + " waggles " + gender2 + " tail happily!");
         llSetObjectName(originalName);
@@ -204,23 +173,13 @@ default
         }
     }
 
-    timer()
-    {
-        twitch();
-        llSetTimerEvent(5.f+llFrand(10.f));
-    }
-    run_time_permissions(integer perm)
-    {
-        if(perm == PERMISSION_TAKE_CONTROLS)
-            llTakeControls( CONTROL_BACK|CONTROL_FWD, TRUE, TRUE );
-    }
 }
 state CuteMenu
 {
     state_entry()
     {
-        listener=llListen(chan,"","","");
-        llDialog(dk,"What will you do with " +owner+"'s tail?",list_cute,chan);
+        listen_id=llListen(channelDialog,"","","");
+        llDialog(toucherkey,"What will you do with " +owner+"'s tail?",list_cute,channelDialog);
     }
     listen(integer c, string n, key i, string m)
     {
@@ -229,7 +188,7 @@ state CuteMenu
         // tail commands
         if(m2 == "brush")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " pulls out a soft brush and begins to stroke it against " + owner + ending + " tail. She giggles and blushes profusely.");
             llSetObjectName(originalName);
@@ -237,7 +196,7 @@ state CuteMenu
         }
         if(m2 == "carress")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " slides their hands along " + owner + ending + " tail slowly, eliciting a soft sigh from " + owner + ". ");
             llSetObjectName(originalName);
@@ -245,51 +204,51 @@ state CuteMenu
         }
         if(m2 == "grab")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " grabs " + owner + ending + " tail and cuddles it softly. She blushes deeply and wiggles, trying to break free.");
             llSetObjectName(originalName);
         }
         if(m2 == "hug")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " hugs " + owner + ending + " stubby little doe tail softly. ♥");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         if(m2 == "play")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " play's with " + owner + ending + " tail, swatting at it. She giggles and flicks it under "+n + "'s nose teasingly. ♥");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         if(m2 == "stroke")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " reaches over and strokes " + owner + ending + " tail. ♥");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         if(m2 == "squeak")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " squeezes the tip of " + owner + ending + " tail making " + gender + " squeak in mock displeasure!");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         if(m2 == "yank")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " yanks " + owner + ending + " tail for attention.");
             llSetObjectName(originalName);
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
     state default;
     }
@@ -298,8 +257,8 @@ state Adult
 {
     state_entry()
     {
-        listener=llListen(chan,"","","");
-        llDialog(dk,"What will you do with " +owner+"'s tail?",list_adult,chan);
+        listen_id=llListen(channelDialog,"","","");
+        llDialog(toucherkey,"What will you do with " +owner+"'s tail?",list_adult,channelDialog);
     }
     listen(integer c, string n, key i, string m)
     {
@@ -309,72 +268,77 @@ state Adult
         // tail commands
         if(m2 == "feel up")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " puts a claw on " + owner + ending + " chest and feels around. ♥");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         else if(m2 == "hot lick")
         {
             if(gender2 == "his"){
-                llListenRemove(listener);
+                llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " bends down in front of " + owner + ", slowly moving their hands to reach " + owner + ending + " butt, squeezing it softly with one hand as they grab his cock,  slowly licking it up and down while looking at him...");
             llSetObjectName(originalName);
-            llListenRemove(listener);}
+            llListenRemove(listen_id);}
             else{
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " bends down in front of " + owner + ", slowly kissing her lap and then put their mouth on her pussy,\n licking slowly...");
             llSetObjectName(originalName);
-            llListenRemove(listener);}
+            llListenRemove(listen_id);}
         }
         else if(m2 == "butt lick")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " bends down and licks " + owner + ending + " butt! ♥");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         else if(m2 == "smack")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " smacks " + owner + ending + " butt!");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         else if(m2 == "grope")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " gropes " + owner + "! ^_~");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         else if(m2 == "hump")
         {
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " grabs " + owner + " from behind and starts humpin!");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         else if(m2 == "fluff")
         {
             debug(m2);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
             llSetObjectName("");
             llSay(0," "+n + " fluffs " + owner + ending + " tail making it nice and soft. ^^");
             llSetObjectName(originalName);
-            llListenRemove(listener);
+            llListenRemove(listen_id);
         }
         else
         {
             debug("Something went wrong. Derp.");
         }
         state default;
+    }
+    timer()
+    {
+        llListenRemove(listen_id);
+        debug("Timed out");
     }
 }
