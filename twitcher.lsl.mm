@@ -327,15 +327,15 @@ list list_adult = ["Fluff","Grope","Hump","Butt Lick","Hot Lick","Smack"];
 list choice = ["Cute","Adult"];
 
 
-key ownerkey;           
-string owner;           
-integer lock = FALSE;   
-integer rand;           
-integer dChan;          
-string touchername;     
-integer listen_handle;  
-key toucherkey;         
-string oname;           
+key ownerkey;
+string owner;
+integer lock = FALSE;
+integer rand;
+integer dChan;
+string touchername;
+integer listen_handle;
+key toucherkey;
+string oname;
 
 
 string ending = "'s";
@@ -349,7 +349,7 @@ twitch()
 
 init()
 {
-    
+
     oname = llGetObjectName();
     ownerkey = llGetOwner();
     owner = llGetDisplayName(ownerkey);
@@ -378,7 +378,7 @@ default
     }
     state_entry(){
         llSetMemoryLimit(21000);
-        
+
         init();
         oname = llGetObjectName();
     }
@@ -416,7 +416,7 @@ default
        string m2 = llToLower(m);
        ;
          n = llGetDisplayName(i);
-        
+
         if(m2 == "cute")
         {
             llListenRemove(listen_handle);
@@ -482,9 +482,9 @@ default
     }
     timer()
     {
-        
+
         llListenRemove(listen_handle);
-        
+
         llSetTimerEvent(0.0);
         ;
     }
@@ -502,7 +502,7 @@ state CuteMenu
         string m2 = llToLower(m);
         n = llGetDisplayName(i);
         llSetObjectName("");
-        
+
         if(m2 == "brush")
         {
             llListenRemove(listen_handle);
@@ -567,7 +567,7 @@ state Adult
         ;
         n = llGetDisplayName(i);
         llSetObjectName("");
-        
+
         if(m2 == "hot lick")
         {
             if(gender2 == "his"){
