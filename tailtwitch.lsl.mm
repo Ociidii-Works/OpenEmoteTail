@@ -1,9 +1,9 @@
-//#define DEBUG
+///#define DEBUG
 
 #ifdef DEBUG
 debug(string text)
 {
-    llOwnerSay(text);
+   llSay(DEBUG_CHANNEL,text);
 }
 #else
 #define debug(dummy)
