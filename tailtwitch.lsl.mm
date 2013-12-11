@@ -1,4 +1,4 @@
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 debug(string text)
@@ -74,16 +74,32 @@ rotation flipRotT(rotation oldRot)
 //////////////////////////////////////
 ////// END OF TAIL TWITCH STUF /////
 ////////////////////////////////////
+
+setEnding()
+{
+    //Message stuff
+    owner = llGetDisplayName(llGetOwner());
+    string nameEnd = llGetSubString(owner, -1, -1);
+    if (nameEnd == "s")
+    {
+        ending = "'";
+        debug("Posessive ending auto-configured for your name: This is " + owner + ending + " tail.");
+    }
+}
+            
+
 default
 {
     attach(key id)
     {
+        setEnding();
         twitch();
         if(id != NULL_KEY)
         llRequestPermissions(llGetOwner(), PERMISSION_TAKE_CONTROLS ); }
     
     on_rez(integer start_param)
     {
+        setEnding();
         twitch();
     }
     state_entry(){
@@ -92,13 +108,7 @@ default
         // Menu stuff
         originalName = llGetObjectName();
         chan = 100 + (integer)llFrand(20000);
-        //Message stuff
-        owner = llGetDisplayName(llGetOwner());
-        string nameEnd = llGetSubString(owner, -1, -1);
-        if (nameEnd == "s"){
-            ending = "'";
-            llOwnerSay("Posessive ending auto-configured for your name: This is " + owner + ending + " tail.");
-            }
+        setEnding();
         // Twitch stuff
         llSetTimerEvent(1);
         t2 = flipRotT(t1);
@@ -180,6 +190,10 @@ default
         // ------------------------------------------------------------------ //
         if(m2 == "waggle")
         {
+        llListenRemove(listener);
+        llSetObjectName("");
+        llSay(0," "+n + " waggles " + gender2 + " tail happily!");
+        llSetObjectName(originalName);
         twitch();
         twitch();
         twitch();
@@ -217,7 +231,7 @@ state CuteMenu
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " pulls out a soft brush and begins to stroke it against " + owner + "'s tail. She giggles and blushes profusely.");
+            llSay(0," "+n + " pulls out a soft brush and begins to stroke it against " + owner + ending + " tail. She giggles and blushes profusely.");
             llSetObjectName(originalName);
             
         }
@@ -225,7 +239,7 @@ state CuteMenu
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " slides their hands along " + owner + "'s tail slowly, eliciting a soft sigh from " + owner + ". ");
+            llSay(0," "+n + " slides their hands along " + owner + ending + " tail slowly, eliciting a soft sigh from " + owner + ". ");
             llSetObjectName(originalName);
             
         }
@@ -233,14 +247,14 @@ state CuteMenu
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " grabs " + owner + "'s tail and cuddles it softly. She blushes deeply and wiggles, trying to break free.");
+            llSay(0," "+n + " grabs " + owner + ending + " tail and cuddles it softly. She blushes deeply and wiggles, trying to break free.");
             llSetObjectName(originalName);
         }
         if(m2 == "hug")
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " hugs " + owner + "'s stubby little doe tail softly. ♥");
+            llSay(0," "+n + " hugs " + owner + ending + " stubby little doe tail softly. ♥");
             llSetObjectName(originalName);
             llListenRemove(listener);
         }
@@ -248,7 +262,7 @@ state CuteMenu
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " play's with " + owner + "'s tail, swatting at it. She giggles and flicks it under "+n + "'s nose teasingly. ♥");
+            llSay(0," "+n + " play's with " + owner + ending + " tail, swatting at it. She giggles and flicks it under "+n + "'s nose teasingly. ♥");
             llSetObjectName(originalName);
             llListenRemove(listener);
         }
@@ -256,7 +270,7 @@ state CuteMenu
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " reaches over and strokes " + owner + "'s tail. ♥");
+            llSay(0," "+n + " reaches over and strokes " + owner + ending + " tail. ♥");
             llSetObjectName(originalName);
             llListenRemove(listener);
         }
@@ -264,7 +278,7 @@ state CuteMenu
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " squeezes the tip of " + owner + "'s tail making " + gender + " squeak in mock displeasure!");
+            llSay(0," "+n + " squeezes the tip of " + owner + ending + " tail making " + gender + " squeak in mock displeasure!");
             llSetObjectName(originalName);
             llListenRemove(listener);
         }
@@ -272,7 +286,7 @@ state CuteMenu
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " yanks " + owner + "'s tail for attention.");
+            llSay(0," "+n + " yanks " + owner + ending + " tail for attention.");
             llSetObjectName(originalName);
             llSetObjectName(originalName);
             llListenRemove(listener);
@@ -297,7 +311,7 @@ state Adult
         {
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " puts a claw on " + owner + "'s chest and feels around. ♥");
+            llSay(0," "+n + " puts a claw on " + owner + ending + " chest and feels around. ♥");
             llSetObjectName(originalName);
             llListenRemove(listener);
         }
@@ -353,7 +367,7 @@ state Adult
             debug(m2);
             llListenRemove(listener);
             llSetObjectName("");
-            llSay(0," "+n + " fluffs " + owner + "'s tail making it nice and soft. ^^");
+            llSay(0," "+n + " fluffs " + owner + ending + " tail making it nice and soft. ^^");
             llSetObjectName(originalName);
             llListenRemove(listener);
         }
