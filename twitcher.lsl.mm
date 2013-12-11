@@ -1,5 +1,3 @@
-/// The latest version of this script can be found at https://bitbucket.org/tarnix/open-source-tail-script/src ///
-
 //#define DEBUG
 
 #ifdef DEBUG
@@ -57,7 +55,9 @@ default
             llTakeControls( CONTROL_BACK|CONTROL_FWD, TRUE, TRUE );
     }
     state_entry()
-    {        llSetTimerEvent(1);
+    {
+        llSetMemoryLimit(8192);
+        llSetTimerEvent(1);
     }
     timer()
     {

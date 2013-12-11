@@ -66,7 +66,7 @@ default
         twitch();
     }
     state_entry(){
-         llSetMemoryLimit(21504);
+        llSetMemoryLimit(21000);
         // Menu stuff
         init();
         oname = llGetObjectName();
