@@ -1,5 +1,5 @@
 /// The latest version of this script can be found at https://bitbucket.org/tarnix/open-source-tail-script/src ///
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 debug(string text)
@@ -13,7 +13,6 @@ debug(string text)
 /// MENUS ////
 list list_cute = ["Brush","Carress","Grab","Hug","Play","Stroke","Squeak","Yank"];
 list list_adult = ["Fluff","Grope","Hump","Butt Lick","Hot Lick","Smack"];
-list list_owner = ["Waggle","Rest","Lock","Unlock","Gender"];
 list choice = ["Cute","Adult"];
 
 // Other variables //
@@ -67,7 +66,7 @@ default
         twitch();
     }
     state_entry(){
-         //llSetMemoryLimit(21504);
+         llSetMemoryLimit(21504);
         // Menu stuff
         init();
         oname = llGetObjectName();
@@ -85,7 +84,10 @@ default
         toucherkey = llDetectedKey(0);
         if(toucherkey == ownerkey)
         {
-            llDialog(toucherkey,"\nChange Tail option",list_owner,dChan);
+            if(!lock)
+                llDialog(toucherkey,"\nChange Tail option",["Waggle","Rest","Lock","Gender"],dChan);
+            else
+                llDialog(toucherkey,"\nChange Tail option",["Waggle","Rest","Unlock","Gender"],dChan);
         }
         else if(lock == FALSE)
         {
@@ -151,7 +153,9 @@ default
         else if(m2 == "waggle")
         {
         llListenRemove(listen_handle);
+        llSetObjectName("");
         llSay(0,n+" waggles " + gender2 + " tail happily!");
+        llSetObjectName(oname);
         twitch();
         twitch();
         twitch();
