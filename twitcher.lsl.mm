@@ -48,7 +48,7 @@ rotation flipRotT(rotation oldRot)
 ////////////////////////////////////
 
 default
-{ 
+{
     run_time_permissions(integer perm)
     {
         if(perm == PERMISSION_TAKE_CONTROLS)
@@ -66,7 +66,7 @@ default
         llSetTimerEvent(5.f+llFrand(10.f));
     }
     // Quick and dirty debugging link_messages
-    link_message(integer sender_num, integer num, string msg, key id) 
+    link_message(integer sender_num, integer num, string msg, key id)
     {
         if(msg == "twitchplz")
         {
