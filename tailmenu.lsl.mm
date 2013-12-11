@@ -61,7 +61,7 @@ setEnding()
         debug("Posessive ending auto-configured for your name: This is " + owner + ending + " tail.");
     }
 }
-            
+
 
 default
 {
@@ -71,7 +71,7 @@ default
         twitch();
         if(id != NULL_KEY)
         llRequestPermissions(llGetOwner(), PERMISSION_TAKE_CONTROLS ); }
-    
+
     on_rez(integer start_param)
     {
         setEnding();
@@ -87,7 +87,9 @@ default
     }
 
     touch_start(integer total_number)
-    {   twitch();
+    {
+        llListenRemove(listen_id);
+        toucherkey = llDetectedKey(0);
         llSetTimerEvent(15);
         touchername = llGetDisplayName(llDetectedKey(0));
         listen_id = llListen(channelDialog, "", toucherkey, "");
@@ -95,13 +97,17 @@ default
         if(toucherkey == llGetOwner())
         {
             llDialog(toucherkey,"\nChange Tail option",list_owner,channelDialog);
-        } else if(lock == FALSE){
-
+        }
+        else if(lock == FALSE)
+        {
             llOwnerSay("Your tail is being touched by " + touchername);
-            llDialog(toucherkey,"\nWould you like to play cute or hot with "+owner+"'s tail?",choice,channelDialog);}
-        else{
+            llDialog(toucherkey,"\nWould you like to play cute or hot with "+owner+"'s tail?",choice,channelDialog);
+        }
+        else
+        {
             llListenRemove(listen_id);
         }
+        twitch();
     }
     listen(integer c, string n, key i, string m)
     {
@@ -127,7 +133,7 @@ default
             llListenRemove(listen_id);
             debug("gender set to male");
         }
-    
+
         if(m2 == "cute")
         {
             llListenRemove(listen_id);
@@ -136,7 +142,7 @@ default
         }
         if(m2 == "adult")
         {
-            
+
             llListenRemove(listen_id);
             state Adult;
         }
@@ -149,14 +155,14 @@ default
             llListenRemove(listen_id);
             lock = TRUE;
             llOwnerSay("Locked");
-            
+
         }
         if(m2 == "unlock")
         {
             llListenRemove(listen_id);
             lock = FALSE;
             llOwnerSay("Unlocked");
-            
+
         }
 
         // ------------------------------------------------------------------ //
@@ -175,12 +181,20 @@ default
         twitch();
         }
     }
-
+    timer()
+    {
+        // Stop listening. It's wise to do this to reduce lag
+        llListenRemove(listen_id);
+        // Stop the timer now that its job is done
+        llSetTimerEvent(0.0);
+        debug("Timed out");
+    }
 }
 state CuteMenu
 {
     state_entry()
     {
+        llSetTimerEvent(15);
         listen_id=llListen(channelDialog,"","","");
         llDialog(toucherkey,"What will you do with " +owner+"'s tail?",list_cute,channelDialog);
     }
@@ -195,7 +209,7 @@ state CuteMenu
             llSetObjectName("");
             llSay(0," "+n + " pulls out a soft brush and begins to stroke it against " + owner + ending + " tail. She giggles and blushes profusely.");
             llSetObjectName(originalName);
-            
+
         }
         if(m2 == "carress")
         {
@@ -203,7 +217,7 @@ state CuteMenu
             llSetObjectName("");
             llSay(0," "+n + " slides their hands along " + owner + ending + " tail slowly, eliciting a soft sigh from " + owner + ". ");
             llSetObjectName(originalName);
-            
+
         }
         if(m2 == "grab")
         {
@@ -255,11 +269,17 @@ state CuteMenu
         }
     state default;
     }
+    timer()
+    {
+        llListenRemove(listen_id);
+        debug("Timed out");
+    }
 }
 state Adult
 {
     state_entry()
     {
+        llSetTimerEvent(15);
         listen_id=llListen(channelDialog,"","","");
         llDialog(toucherkey,"What will you do with " +owner+"'s tail?",list_adult,channelDialog);
     }
