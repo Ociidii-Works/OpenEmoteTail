@@ -1,3 +1,6 @@
+/// The latest version of this script can be found at https://bitbucket.org/tarnix/open-source-tail-script/src ///
+
+
 ///#define DEBUG
 
 #ifdef DEBUG
