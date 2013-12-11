@@ -1,6 +1,4 @@
 /// The latest version of this script can be found at https://bitbucket.org/tarnix/open-source-tail-script/src ///
-
-
 #define DEBUG
 
 #ifdef DEBUG
@@ -11,7 +9,6 @@ debug(string text)
 #else
 #define debug(dummy)
 #endif
-
 
 /// MENUS ////
 list list_cute = ["Brush","Carress","Grab","Hug","Play","Stroke","Squeak","Yank"];
@@ -29,6 +26,7 @@ string touchername;     // Required to re-use the name of who is touching the ta
 integer listen_handle;  // Required for the listener.
 key toucherkey;         // This will be set to the toucher's key. Used for user detection.
 string oname;           //  To keep a name for the object when needed.
+
 // Automagical Ending fixer //
 string ending = "'s";
 string gender = "him";
@@ -38,10 +36,6 @@ twitch()
 {
     llMessageLinked(LINK_THIS, 0, "twitchplz", "");
 }
-
-//////////////////////////////////////
-////// END OF TAIL TWITCH STUF /////
-////////////////////////////////////
 
 init()
 {
@@ -56,7 +50,6 @@ init()
         debug("INIT: This is " + owner + ending + " tail.");
     }
 }
-
 
 default
 {
@@ -204,37 +197,31 @@ state CuteMenu
         else if(m2 == "carress")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" slides their hands along " + owner + ending + " tail slowly, eliciting a soft sigh from " + owner + ". ");
         }
         else if(m2 == "grab")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" grabs " + owner + ending + " tail and cuddles it softly. She blushes deeply and wiggles, trying to break free.");
         }
         else if(m2 == "hug")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" hugs " + owner + ending + " stubby little doe tail softly. ♥");
         }
         else if(m2 == "play")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" play's with " + owner + ending + " tail, swatting at it. She giggles and flicks it under "+n+"'s nose teasingly. ♥");
         }
         else if(m2 == "stroke")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" reaches over and strokes " + owner + ending + " tail. ♥");
         }
         else if(m2 == "squeak")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" squeezes the tip of " + owner + ending + " tail making " + gender + " squeak in mock displeasure!");
         }
         else if(m2 == "yank")
@@ -275,39 +262,33 @@ state Adult
             }
             else{
             llListenRemove(listen_handle);
-
             llSay(0,n+" bends down in front of " + owner + ", slowly kissing her lap and then put their mouth on her pussy,\n licking slowly...");
             }
         }
         else if(m2 == "butt lick")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" bends down and licks " + owner + ending + " butt! ♥");
         }
         else if(m2 == "smack")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" smacks " + owner + ending + " butt!");
         }
         else if(m2 == "grope")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" gropes " + owner + "! ^_~");
         }
         else if(m2 == "hump")
         {
             llListenRemove(listen_handle);
-
             llSay(0,n+" grabs " + owner + " from behind and starts humpin!");
         }
         else if(m2 == "fluff")
         {
             debug(m2);
             llListenRemove(listen_handle);
-
             llSay(0,n+" fluffs " + owner + ending + " tail making it nice and soft. ^^");
         }
         else
