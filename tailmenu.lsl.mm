@@ -20,8 +20,6 @@ DebugMessage(string message)
 /// MENUS ////
 list list_cute = ["Brush","Carress","Grab","Hug","Play","Stroke","Squeak","Yank","Adult Emotes"];
 list list_adult = ["Fluff","Grope","Hump","Butt Lick","Genitals Lick","Smack"];
-list owner_menu_l = ["Waggle","Emote","Unlock","Gender"];
-list owner_menu_u = ["Waggle","Emote","Lock","Gender"];
 
 // Other variables //
 key ownerkey;           // avoid calling llGetOwner so often.
