@@ -204,37 +204,37 @@ state CuteMenu
         else if(m2 == "carress")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" slides their hands along " + owner + ending + " tail slowly, eliciting a soft sigh from " + owner + ". ");
         }
         else if(m2 == "grab")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" grabs " + owner + ending + " tail and cuddles it softly. She blushes deeply and wiggles, trying to break free.");
         }
         else if(m2 == "hug")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" hugs " + owner + ending + " stubby little doe tail softly. ♥");
         }
         else if(m2 == "play")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" play's with " + owner + ending + " tail, swatting at it. She giggles and flicks it under "+n+"'s nose teasingly. ♥");
         }
         else if(m2 == "stroke")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" reaches over and strokes " + owner + ending + " tail. ♥");
         }
         else if(m2 == "squeak")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" squeezes the tip of " + owner + ending + " tail making " + gender + " squeak in mock displeasure!");
         }
         else if(m2 == "yank")
@@ -270,44 +270,44 @@ state Adult
         {
             if(gender2 == "his"){
                 llListenRemove(listen_handle);
-            
+
             llSay(0,n+" bends down in front of " + owner + ", slowly moving their hands to reach " + owner + ending + " butt, squeezing it softly with one hand as they grab his cock,  slowly licking it up and down while looking at him...");
             }
             else{
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" bends down in front of " + owner + ", slowly kissing her lap and then put their mouth on her pussy,\n licking slowly...");
             }
         }
         else if(m2 == "butt lick")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" bends down and licks " + owner + ending + " butt! ♥");
         }
         else if(m2 == "smack")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" smacks " + owner + ending + " butt!");
         }
         else if(m2 == "grope")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" gropes " + owner + "! ^_~");
         }
         else if(m2 == "hump")
         {
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" grabs " + owner + " from behind and starts humpin!");
         }
         else if(m2 == "fluff")
         {
             debug(m2);
             llListenRemove(listen_handle);
-            
+
             llSay(0,n+" fluffs " + owner + ending + " tail making it nice and soft. ^^");
         }
         else
