@@ -1,19 +1,19 @@
 /// The latest version of this script can be found at https://bitbucket.org/tarnix/open-source-tail-script/src ///
 
-integer MessagesLevel = 0; // 0: error, 1: info, 2: debug
+integer MessagesLevel = 0; // 0: none, 1: error , 2: info, 3: debug
 ErrorMessage(string message)
 {
-	if(MessagesLevel >= 0)
+	if(MessagesLevel >= 1)
 		llSay(DEBUG_CHANNEL, "E: " + message);
 }
 InfoMessage(string message)
 {
-	if(MessagesLevel >= 1)
+	if(MessagesLevel >= 2)
 		llSay(DEBUG_CHANNEL, "I: " + message);
 }
 DebugMessage(string message)
 {
-	if(MessagesLevel >= 2)
+	if(MessagesLevel >= 3)
 		llSay(DEBUG_CHANNEL, "D: " + message);
 }
 
