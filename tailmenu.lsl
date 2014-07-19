@@ -38,6 +38,12 @@ string gender3 = "She";
 
 // viewer 3 prettyfication //
 integer viewer3 = 1;
+
+/////////////////////
+/// Functions //////
+///////////////////
+
+
 twitch(string times)
 {
     if(useTwitcher == 1)
@@ -46,9 +52,12 @@ twitch(string times)
     }
 }
 
-/////////////////////
-/// Functions //////
-///////////////////
+string Key2Link(key k)
+{
+    string l = "[secondlife:///app/agent/"+(string)k + "/about "+llList2String(llParseString2List(llGetDisplayName(k)
+        +"("+llKey2Name(k)+")", [" "], []), 0) +"]";
+    return (string)l;
+}
 
 ErrorMessage(string message)
 {
@@ -177,7 +186,7 @@ default
         InfoMessage(touchername+" selected "+m2);
         if(viewer3)
         {
-            n="[secondlife:///app/agent/"+(string)i+"/about " + llGetDisplayName(i)+"]";
+            n=Key2Link(i);
         }
         else
         {
