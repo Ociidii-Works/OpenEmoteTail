@@ -31,10 +31,10 @@ string sGenderHim;
 string sGenderHis;
 string sGenderHeCap;
 /// Functions //////
-changeGender(integer male)
+fSetGender(integer iNewGender)
 {
     //if (male == 0)
-    if(!bGender)
+    if(!iNewGender)
     {
         sGenderHim = "her";
         sGenderHis = "her";
@@ -47,6 +47,7 @@ changeGender(integer male)
         sGenderHis = "his";
         sGenderHeCap = "He";
     }
+    bGender = iNewGender;
 }
 ErrorMessage(string message)
 {
@@ -72,9 +73,8 @@ twitch(string times)
 }
 string Key2Link(key k)
 {
-    string l = "[secondlife:///app/agent/"+(string)k + "/about "+llList2String(llParseString2List(llGetDisplayName(k)
-        +"("+llKey2Name(k)+")", [" "], []), 0) +"]";
-    return (string)l;
+     return "[secondlife:///app/agent/"+(string)k
+        + "/about "+llGetDisplayName(k)+"]";
 }
 init()
 {
@@ -88,6 +88,7 @@ init()
         oEnding = "'";
         InfoMessage("INIT: This is "+owner+oEnding+ " tail.");
     }
+    fSetGender(bGender);
 }
 menu(string type){
     if (type == "cute"){
@@ -191,13 +192,13 @@ default
         else if(m == "Tacos")
         {
             llListenRemove(listen_handle);
-            changeGender(0);
+            fSetGender(0);
             InfoMessage("gender set to female");
         }
         else if(m == "Sausage")
         {
             llListenRemove(listen_handle);
-            changeGender(1);
+            fSetGender(1);
             InfoMessage("gender set to male");
         }
         else if(m == "Emote")
