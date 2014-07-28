@@ -11,7 +11,7 @@ integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
-integer MessagesLevel = 3;          // 0: none, 1: error , 2: info, 3: debug
+integer MessagesLevel = 0;          // 0: none, 1: error , 2: info, 3: debug
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Play","Hug","Hold"];
 list list_adult = ["Fluff","Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
@@ -232,7 +232,7 @@ default
         }
         else
         {
-            string n=llGetDisplayName(kToucherKey);
+            n=llGetDisplayName(kToucherKey);
         }
         //         n = llGetDisplayName(i);
         // tail commands
