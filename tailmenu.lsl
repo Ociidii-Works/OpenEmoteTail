@@ -3,7 +3,7 @@
 
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
-integer bGender = 0; // set default gender here.
+integer bGender = 0;                // set default gender here.
 // 0 for FEMALE
 // 1 for MALE
 integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
@@ -11,20 +11,20 @@ integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
-integer MessagesLevel = 3; // 0: none, 1: error , 2: info, 3: debug
+integer MessagesLevel = 3;          // 0: none, 1: error , 2: info, 3: debug
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Play","Hug","Hold"];
 list list_adult = ["Fluff","Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
 //// Other variables ////
-key kOwnerKey;           // avoid calling llGetOwner so often.
-string sOwnerName;           // Needed for owner identification
-integer lock = FALSE;   // Boolean for locking capability
-integer iChannel;           // Required for channel reference.
-string sToucherName;     // Required to re-use the name of who is touching the tail
-integer iListenHandle;  // Required for the listener.
-//key kToucherKey;         // This will be set to the toucher's key. Used for user detection.
-string sObjectName;           //  To keep a name for the object when needed.
-string sEmoteMessage;   // Used to send the emote to the world
+key kOwnerKey;                      // avoid calling llGetOwner so often.
+string sOwnerName;                  // Needed for owner identification
+integer lock = FALSE;               // Boolean for locking capability
+integer iChannel;                   // Required for channel reference.
+string sToucherName;                // Required to re-use the name of who is touching the tail
+integer iListenHandle;              // Required for the listener.
+//key kToucherKey;                  // This will be set to the toucher's key. Used for user detection.
+string sObjectName;                 //  To keep a name for the object when needed.
+// string sEmoteMessage;               // Used to send the emote to the world
 //// viewer 3 prettyfication ////
 integer viewer3 = 1;
 //// Automagical Ending fixer ////
