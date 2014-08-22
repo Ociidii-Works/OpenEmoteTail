@@ -12,7 +12,7 @@ integer bGender = 0;                // set default gender here.
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
 integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
-integer iShowMemStats = FALSE;             // Show Memory statistics
+integer iShowMemStats = TRUE;             // Show Memory statistics
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Play","Hug","Hold"];
 list list_adult = ["Fluff","Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
@@ -71,6 +71,9 @@ dm(integer type, string e, string m)
         m
             the actual message
     */
+    if(type == 5)
+         llRegionSayTo(kOwnerKey,0, "D:"+e+" "+ m);
+         
     m = " "+llStringTrim(m,0x3);
     if(type == 1 && MessagesLevel >= 1)
         llRegionSayTo(kOwnerKey,0, "E:"+e+" "+ m);
@@ -83,9 +86,6 @@ dm(integer type, string e, string m)
 
     if(type == 4 && MessagesLevel >= 4)
         llRegionSayTo(kOwnerKey,0, "D:"+e+" "+ m);
-    
-     if(type == 5)
-         llRegionSayTo(kOwnerKey,0, "D:"+e+" "+ m);
 }
 // twitch(string times)
 // {
@@ -241,7 +241,7 @@ default
     }
     state_entry()
     {
-        llSetMemoryLimit(1024*32);
+        llSetMemoryLimit(1024*28);
         // Menu stuff
         init();
     }
@@ -308,7 +308,6 @@ default
                 llSay(0,n+" waggles " + sGenderHis + " tail happily!");
                 llSetObjectName(sObjectName);
                 // twitch("7");
-                fClearListeners();
             }
         }
         else if (bMenuType == 3)
@@ -329,8 +328,10 @@ default
             fClearListeners();
         }
         //// Soft Emotes ////
-        else if(bMenuType == 1) // 0
+        else if(bMenuType >0)
         {
+            if(bMenuType == 1){
+                
             if(m == "Nom On")
             {
                 llListenRemove(iListenHandle);
@@ -338,45 +339,36 @@ default
             }
             else if(m == "Chew On")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n+" starts to chew on " +sOwnerName+sOwnerPossessive+" tail. "+sOwnerName+" is not too sure how to feel about this o.o...");
             }
             else if(m == "Bite")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n+" bites down on "+sOwnerName+sOwnerPossessive+" tail! >w<");
             }
             else if(m == "Pet")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n+" takes a hold of "+sOwnerName+sOwnerPossessive+" tail and starts petting it! ♥");
             }
             else if(m == "Tug")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n+" grabs and tugs hard on "+sOwnerName+sOwnerPossessive+ " tail! "+sOwnerName+" tugs back on "+n+sToucherPossessive+" ear! :3");
             }
             else if(m == "Grab")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n+" grabs "+sOwnerName+sOwnerPossessive+ " tail and just holds it. "+sOwnerName+" looks back at "+n+".");
             }
             else if(m == "Play")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,sOwnerName+" swishes "+sGenderHis+" tail about. "+n+" grabs it and starts tugging it playfully.");
             }
             else if(m == "Hug")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n+" grabs "+sOwnerName+sOwnerPossessive+" tail and gives it a big hug! ♥");
             }
             else if(m == "Hold")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n+" grabs and holds "+sOwnerName+sOwnerPossessive+" tail, refusing to let "+sGenderHim+" go!");
             }
-            bMenuType = 0;
         }
         /// Adult Emotes ////
         else if(bMenuType == 2) // 1
@@ -418,9 +410,11 @@ default
                 llListenRemove(iListenHandle);
                 llSay(0,n+" fluffs " + sOwnerName + sOwnerPossessive + " tail, making it nice and soft. ^^");
             }
-            bMenuType = 0;
-            fClearListeners();
+    
         }
+             bMenuType = 0;
+            fClearListeners();
+    }
         //// Owner Menu ////
         else
         {
