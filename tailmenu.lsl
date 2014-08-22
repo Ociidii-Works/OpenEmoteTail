@@ -12,6 +12,7 @@ integer bGender = 0;                // set default gender here.
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
 integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
+integer iShowMemStats = FALSE;             // Show Memory statistics
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Play","Hug","Hold"];
 list list_adult = ["Fluff","Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
@@ -48,6 +49,15 @@ fSetGender(integer iNewGender)
     }
     bGender = iNewGender;
 }
+memstats(string type)
+{
+    if(iShowMemStats)
+    {
+        dm(5,type,(string)llGetMemoryLimit()+" kb allocated");
+        dm(5,type,(string)llGetUsedMemory()+" kb used");
+        dm(5,type,(string)llGetFreeMemory()+" kb free");
+    }
+}
 dm(integer type, string e, string m)
 {
     /*  t
@@ -55,6 +65,7 @@ dm(integer type, string e, string m)
             2 = warning
             3 = info
             4 = debug
+            5 = memstats
         e
             event the message comes from
         m
@@ -72,6 +83,9 @@ dm(integer type, string e, string m)
 
     if(type == 4 && MessagesLevel >= 4)
         llRegionSayTo(kOwnerKey,0, "D:"+e+" "+ m);
+    
+     if(type == 5)
+         llRegionSayTo(kOwnerKey,0, "D:"+e+" "+ m);
 }
 // twitch(string times)
 // {
@@ -104,6 +118,7 @@ init()
         sOwnerPossessive = "'s";
     }
     fSetGender(bGender);
+    memstats(et);
 }
 //// Menus ////
 /* Menu Types:
@@ -116,6 +131,7 @@ integer bMenuType;
 fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
 {
     string et = "fBuildMenu";
+    memstats(et);
     dm(4,et,"Received Menu Type: "+(string)bInternalMenuSelect);
     dm(4,et,"Received Key: "+(string)kToucherKey);
     sToucherName = llGetDisplayName(kToucherKey);
@@ -182,6 +198,7 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
         dm(4,et,"Something unexpected happened D:");
     }
     // twitch("1");
+    memstats(et);
 }
 fClearListeners()
 {
@@ -210,6 +227,7 @@ default
         // twitch("3");
         if(kID != NULL_KEY)
         llRequestPermissions(kOwnerKey, PERMISSION_TAKE_CONTROLS );
+        memstats("attach");
     }
     on_rez(integer start_param)
     {
@@ -223,7 +241,7 @@ default
     }
     state_entry()
     {
-        llSetMemoryLimit(21000);
+        llSetMemoryLimit(1024*32);
         // Menu stuff
         init();
     }
