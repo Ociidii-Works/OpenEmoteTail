@@ -1,17 +1,17 @@
 // The latest version of this script can be found at
 // https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
-
+string ver = "3.7.5";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
 integer bGender = 0;                // set default gender here.
 // 0 for FEMALE
 // 1 for MALE
-integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
+// integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
 /////////////////////////////////////////////////////////////////////////
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
-integer MessagesLevel = 0;          // 0: none, 1: error , 2: info, 3: debug
+integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Play","Hug","Hold"];
 list list_adult = ["Fluff","Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
@@ -25,8 +25,6 @@ integer iListenHandle;              // Required for the listener.
 //key kToucherKey;                  // This will be set to the toucher's key. Used for user detection.
 string sObjectName;                 //  To keep a name for the object when needed.
 // string sEmoteMessage;               // Used to send the emote to the world
-//// viewer 3 prettyfication ////
-integer viewer3 = 1;
 //// Automagical Ending fixer ////
 string sOwnerPossessive;
 string sToucherPossessive;
@@ -50,28 +48,38 @@ fSetGender(integer iNewGender)
     }
     bGender = iNewGender;
 }
-ErrorMessage(string message)
+dm(integer type, string e, string m)
 {
-    if(MessagesLevel >= 1)
-    llSay(DEBUG_CHANNEL, "E: " + message);
+    /*  t
+            1 = error
+            2 = warning
+            3 = info
+            4 = debug
+        e
+            event the message comes from
+        m
+            the actual message
+    */
+    m = " "+llStringTrim(m,0x3);
+    if(type == 1 && MessagesLevel >= 1)
+        llRegionSayTo(kOwnerKey,0, "E:"+e+" "+ m);
+
+    if(type == 2 && MessagesLevel >= 2)
+        llRegionSayTo(kOwnerKey,0, "W:"+e+" "+ m);
+
+    if(type == 3 && MessagesLevel >= 3)
+        llRegionSayTo(kOwnerKey,0, "I:"+e+" "+ m);
+
+    if(type == 4 && MessagesLevel >= 4)
+        llRegionSayTo(kOwnerKey,0, "D:"+e+" "+ m);
 }
-InfoMessage(string message)
-{
-    if(MessagesLevel >= 2)
-    llSay(DEBUG_CHANNEL, "I: " + message);
-}
-sDebug(string message)
-{
-    if(MessagesLevel >= 3)
-    llSay(DEBUG_CHANNEL, "D: " + message);
-}
-twitch(string times)
-{
-    if(useTwitcher == 1)
-    {
-        llMessageLinked(LINK_THIS, 0, "t "+times, "");
-    }
-}
+// twitch(string times)
+// {
+//     if(useTwitcher == 1)
+//     {
+//         llMessageLinked(LINK_THIS, 0, "t "+times, "");
+//     }
+// }
 string Key2Link(key k)
 {
     return "[secondlife:///app/agent/"+(string)k
@@ -79,16 +87,17 @@ string Key2Link(key k)
 }
 init()
 {
-    //Message stuff
-    sDebug("Init...");
-    sObjectName = llGetObjectName();
     kOwnerKey = llGetOwner();
+    //Message stuff
+    string et = "init";
+    dm(4,et,"Running OET v"+ver+"...");
+    sObjectName = llGetObjectName();
     sOwnerName = llGetDisplayName(kOwnerKey);
     string nameEnd = llGetSubString(sOwnerName, -1, -1);
     if (nameEnd == "s")
     {
         sOwnerPossessive = "'";
-        InfoMessage("INIT: This is "+sOwnerName+sOwnerPossessive+ " tail.");
+        dm(3,et,"This is "+sOwnerName+sOwnerPossessive+ " tail.");
     }
     else
     {
@@ -106,81 +115,83 @@ init()
 integer bMenuType;
 fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
 {
-    sDebug("Received Menu Type: "+(string)bInternalMenuSelect);
-    sDebug("Received Key: "+(string)kToucherKey);
+    string et = "fBuildMenu";
+    dm(4,et,"Received Menu Type: "+(string)bInternalMenuSelect);
+    dm(4,et,"Received Key: "+(string)kToucherKey);
     sToucherName = llGetDisplayName(kToucherKey);
     iChannel = 0x80000000 | (integer)("0x"+(string)llDetectedKey(0));
-    sDebug("Channel = " + (string)iChannel);
+    dm(4,et,"Channel = " + (string)iChannel);
     iListenHandle = llListen(iChannel, "", kToucherKey, "");
     //// Owner Menu ////
     if(kToucherKey == kOwnerKey)
     {
-        InfoMessage("Entering Owner Menu");
+        dm(3,et,"Entering Owner Menu");
         if(bInternalMenuSelect == 0)
         { // Owner Menu Root
-            InfoMessage("Checking Lock");
+            dm(3,et,"Checking Lock");
             if(!lock) // if not locked
             {
-                 sDebug("Is Unlocked");
+                 dm(4,et,"Is Unlocked");
                 llDialog(kOwnerKey,"\nChange Tail option",["Waggle","Lock","Gender"],iChannel);
             }
             else // if locked
             {
-                 sDebug("Is Locked");
+                 dm(4,et,"Is Locked");
                 llDialog(kOwnerKey,"\nChange Tail option",["Waggle","Unlock","Gender"],iChannel);
             }
         }
         if(bInternalMenuSelect == 3) // Gender Menu
         {
-            InfoMessage("Entering Gender Menu");
+            dm(3,et,"Entering Gender Menu");
             llDialog(kToucherKey,"Sausage or Tacos?",["Sausage","Tacos"],iChannel);
         }
     }
     //// Others Menu ////
     else if(kToucherKey != kOwnerKey)
     {
-        sDebug("Checking Lock for Others");
+        dm(4,et,"Checking Lock for Others");
         if(lock)
         {
             llListenRemove(iListenHandle);
         }
         else // if not locked and not owner
         {
-            sDebug("Entering Others Menu");
+            dm(4,et,"Entering Others Menu");
             llSetObjectName("");
             llOwnerSay(sToucherName + " is touching your tail...");
             llSetObjectName(sObjectName);
             if(bInternalMenuSelect == 0) // Root Menu
             {
-                sDebug("Building Choice Menu");
+                dm(4,et,"Building Choice Menu");
                 llDialog(kToucherKey,"Chose an Emote type",lEmoteTypeMenu,iChannel);
             }
             else if(bInternalMenuSelect == 1) // Soft Menu
             {
-                sDebug("Building Soft Menu");
+                dm(4,et,"Building Soft Menu");
                 llDialog(kToucherKey,"Okay, what do you want to do?",list_soft,iChannel);
             }
             else if(bInternalMenuSelect == 2) // Adult Menu
             {
-                sDebug("Building Adult Menu");
+                dm(4,et,"Building Adult Menu");
                 llDialog(kToucherKey,"Feeling naughty, eh? How much?",list_adult,iChannel);
             }
         }
     }
     else
     {
-        sDebug("MENUBUILDER: Something unexpected happened D:");
+        dm(4,et,"Something unexpected happened D:");
     }
-    twitch("1");
+    // twitch("1");
 }
 fClearListeners()
 {
+    string et = "fClearListeners";
     // Stop listening. It's wise to do this to reduce lag
     llListenRemove(iListenHandle);
     // Stop the timer now that its job is done
     llSetTimerEvent(0.0);
     //llInstantMessage(kToucherKey,"Timed out. Click the tail again to get a menu");
-    InfoMessage("Listener closed");
+    dm(3,et,"Listener closed");
 }
 default
 {
@@ -194,17 +205,21 @@ default
     }
     attach(key kID)
     {
+        if(kOwnerKey != llGetOwner()) llResetScript();
         init();
-        twitch("3");
+        // twitch("3");
         if(kID != NULL_KEY)
         llRequestPermissions(kOwnerKey, PERMISSION_TAKE_CONTROLS );
     }
     on_rez(integer start_param)
     {
-        init();
-        llSleep(2);
-        llDialog(llGetOwner(),"Sausage or Tacos?",["Sausage","Tacos"],iChannel);
-        twitch("2");
+        if(start_param)
+        {
+            init();
+            llSleep(2);
+            llDialog(llGetOwner(),"Sausage or Tacos?",["Sausage","Tacos"],iChannel);
+            // twitch("2");
+        }
     }
     state_entry()
     {
@@ -224,16 +239,11 @@ default
     }
     listen(integer c, string n, key kToucherKey, string m)
     {
+        if(!c) return;
         //string m = llToLower(m);
-        sDebug("LISTEN: "+sToucherName+" selected "+m);
-        if(viewer3)
-        {
-            n=Key2Link(kToucherKey);
-        }
-        else
-        {
-            n=llGetDisplayName(kToucherKey);
-        }
+        n=Key2Link(kToucherKey);
+        string et = "listen";
+        dm(4,et,n+" selected "+m);
         //         n = llGetDisplayName(i);
         // tail commands
         if(bMenuType == 0)
@@ -279,7 +289,7 @@ default
                 llSetObjectName("");
                 llSay(0,n+" waggles " + sGenderHis + " tail happily!");
                 llSetObjectName(sObjectName);
-                twitch("7");
+                // twitch("7");
                 fClearListeners();
             }
         }
@@ -289,13 +299,13 @@ default
             {
                 llListenRemove(iListenHandle);
                 fSetGender(0);
-                InfoMessage("gender set to female");
+                dm(3,et,"gender set to female");
             }
             else if(m == "Sausage")
             {
                 llListenRemove(iListenHandle);
                 fSetGender(1);
-                InfoMessage("gender set to male");
+                dm(3,et,"gender set to male");
             }
             bMenuType = 0;
             fClearListeners();
@@ -387,7 +397,6 @@ default
             }
             else if(m == "Fluff")
             {
-                sDebug(m);
                 llListenRemove(iListenHandle);
                 llSay(0,n+" fluffs " + sOwnerName + sOwnerPossessive + " tail, making it nice and soft. ^^");
             }
@@ -397,8 +406,8 @@ default
         //// Owner Menu ////
         else
         {
-            ErrorMessage("LISTEN: "+"Something unexpected happened");
-            sDebug("LISTEN: "+"Message Received: "+m);
+            dm(2,et,"Something unexpected happened");
+            //dm(4,et,"Message Received: "+m);
         }
     }
     timer()
