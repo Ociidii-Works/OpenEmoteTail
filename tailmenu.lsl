@@ -14,8 +14,8 @@ integer bGender = 0;                // set default gender here.
 integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
 integer iShowMemStats = FALSE;             // Show Memory statistics
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
-list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Play","Hug","Hold"];
-list list_adult = ["Fluff","Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
+list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Fluff","Play","Hug","Hold"];
+list list_adult = ["Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
 //// Other variables ////
 key kOwnerKey;                      // avoid calling llGetOwner so often.
 string sOwnerName;                  // Needed for owner identification
@@ -369,6 +369,11 @@ default
 			{
 				llSay(0,n+" grabs and holds "+sOwnerName+sOwnerPossessive+" tail, refusing to let "+sGenderHim+" go!");
 			}
+			else if(m == "Fluff")
+			{
+				llListenRemove(iListenHandle);
+				llSay(0,n+" fluffs " + sOwnerName + sOwnerPossessive + " tail, making it nice and soft. ^^");
+			}
 		}
 		/// Adult Emotes ////
 		else if(bMenuType == 2) // 1
@@ -405,12 +410,6 @@ default
 				llListenRemove(iListenHandle);
 				llSay(0,n+" grabs " + sOwnerName + " from behind and starts humpin!");
 			}
-			else if(m == "Fluff")
-			{
-				llListenRemove(iListenHandle);
-				llSay(0,n+" fluffs " + sOwnerName + sOwnerPossessive + " tail, making it nice and soft. ^^");
-			}
-
 		}
 			 bMenuType = 0;
 			fClearListeners();
