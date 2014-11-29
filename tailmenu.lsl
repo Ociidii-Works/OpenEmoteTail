@@ -131,7 +131,7 @@ integer bMenuType;
 fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
 {
 	string et = "fBuildMenu";
-	memstats(et);
+	if(MessagesLevel>2) memstats(et);
 	dm(4,et,"Received Menu Type: "+(string)bInternalMenuSelect);
 	dm(4,et,"Received Key: "+(string)kToucherKey);
 	sToucherName = llGetDisplayName(kToucherKey);
@@ -198,7 +198,7 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
 		dm(4,et,"Something unexpected happened D:");
 	}
 	// twitch("1");
-	memstats(et);
+	if(MessagesLevel>2) memstats(et);
 }
 fClearListeners()
 {
@@ -227,7 +227,7 @@ default
 		// twitch("3");
 		if(kID != NULL_KEY)
 		llRequestPermissions(kOwnerKey, PERMISSION_TAKE_CONTROLS );
-		memstats("attach");
+		if(MessagesLevel>2) memstats("attach");
 	}
 	on_rez(integer start_param)
 	{
