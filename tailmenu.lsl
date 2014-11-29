@@ -12,7 +12,7 @@ integer bGender = 0;                // set default gender here.
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
 integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
-integer iShowMemStats = TRUE;             // Show Memory statistics
+integer iShowMemStats = FALSE;             // Show Memory statistics
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Play","Hug","Hold"];
 list list_adult = ["Fluff","Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
