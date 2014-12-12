@@ -111,7 +111,7 @@ init()
 	if (nameEnd == "s")
 	{
 		sOwnerPossessive = "'";
-		dm(3,et,"This is "+sOwnerName+sOwnerPossessive+ " tail.");
+		dm(3,et,"This is "+sOwnerName + sOwnerPossessive+ " tail.");
 	}
 	else
 	{
@@ -339,27 +339,27 @@ default
 			if(m == "Nom On")
 			{
 				llListenRemove(iListenHandle);
-				llSay(0,n+" grabs and noms on "+sOwnerName+sOwnerPossessive+ " tail. "+sOwnerName+" looks back at "+sGenderHis+" tail to make sure "+n+" did not drool all over it.");
+				llSay(0,n+" grabs and noms on "+sOwnerName + sOwnerPossessive+ " tail. "+sOwnerName+" looks back at "+sGenderHis+" tail to make sure "+n+" did not drool all over it.");
 			}
 			else if(m == "Chew On")
 			{
-				llSay(0,n+" starts to chew on " +sOwnerName+sOwnerPossessive+" tail. "+sOwnerName+" is not too sure how to feel about this o.o...");
+				llSay(0,n+" starts to chew on " +sOwnerName + sOwnerPossessive+" tail. "+sOwnerName+" is not too sure how to feel about this o.o...");
 			}
 			else if(m == "Bite")
 			{
-				llSay(0,n+" bites down on "+sOwnerName+sOwnerPossessive+" tail! >w<");
+				llSay(0,n+" bites down on "+sOwnerName + sOwnerPossessive+" tail! >w<");
 			}
 			else if(m == "Pet")
 			{
-				llSay(0,n+" takes a hold of "+sOwnerName+sOwnerPossessive+" tail and starts petting it! ♥");
+				llSay(0,n+" takes a hold of "+sOwnerName + sOwnerPossessive+" tail and starts petting it! ♥");
 			}
 			else if(m == "Tug")
 			{
-				llSay(0,n+" grabs and tugs hard on "+sOwnerName+sOwnerPossessive+ " tail! "+sOwnerName+" tugs back on "+n+sToucherPossessive+" ear! :3");
+				llSay(0,n+" grabs and tugs hard on "+sOwnerName + sOwnerPossessive+ " tail! "+sOwnerName+" tugs back on "+n + sToucherPossessive+" ear! :3");
 			}
 			else if(m == "Grab")
 			{
-				llSay(0,n+" grabs "+sOwnerName+sOwnerPossessive+ " tail and just holds it. "+sOwnerName+" looks back at "+n+".");
+				llSay(0,n+" grabs "+sOwnerName + sOwnerPossessive+ " tail and just holds it. "+sOwnerName+" looks back at "+n+".");
 			}
 			else if(m == "Play")
 			{
@@ -367,11 +367,11 @@ default
 			}
 			else if(m == "Hug")
 			{
-				llSay(0,n+" grabs "+sOwnerName+sOwnerPossessive+" tail and gives it a big hug! ♥");
+				llSay(0,n+" grabs "+sOwnerName + sOwnerPossessive+" tail and gives it a big hug! ♥");
 			}
 			else if(m == "Hold")
 			{
-				llSay(0,n+" grabs and holds "+sOwnerName+sOwnerPossessive+" tail, refusing to let "+sGenderHim+" go!");
+				llSay(0,n+" grabs and holds "+sOwnerName + sOwnerPossessive+" tail, refusing to let "+sGenderHim+" go!");
 			}
 			else if(m == "Fluff")
 			{
