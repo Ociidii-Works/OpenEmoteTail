@@ -134,7 +134,6 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
 	if(MessagesLevel>2) memstats(et);
 	dm(4,et,"Received Menu Type: "+(string)bInternalMenuSelect);
 	dm(4,et,"Received Key: "+(string)kToucherKey);
-	sToucherName = llGetDisplayName(kToucherKey);
 	iChannel = 0x80000000 | (integer)("0x"+(string)llDetectedKey(0));
 	dm(4,et,"Channel = " + (string)iChannel);
 	iListenHandle = llListen(iChannel, "", kToucherKey, "");
@@ -174,7 +173,6 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
 		{
 			dm(4,et,"Entering Others Menu");
 			llSetObjectName("");
-			llOwnerSay(sToucherName + " is touching your tail...");
 			llSetObjectName(sObjectName);
 			if(bInternalMenuSelect == 0) // Root Menu
 			{
@@ -249,9 +247,15 @@ default
 	{
 		if(total_number>0)
 		{
+			key kToucherKey = llDetectedKey(0);
 			llListenRemove(iListenHandle);
 			llSetTimerEvent(15);
 			fBuildMenu(0, llDetectedKey(0));
+			if(kToucherKey != kOwnerKey)
+			{
+				sToucherName = llGetDisplayName(kToucherKey);
+				llOwnerSay(sToucherName + " is touching your tail...");
+			}
 
 		}
 	}
