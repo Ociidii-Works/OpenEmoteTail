@@ -255,6 +255,15 @@ default
 			{
 				sToucherName = llGetDisplayName(kToucherKey);
 				llOwnerSay(sToucherName + " is touching your tail...");
+				string nameEnd = llGetSubString(sToucherName, -1, -1);
+				if (nameEnd == "s")
+				{
+					sToucherPossessive = "'";
+				}
+				else
+				{
+					sToucherPossessive = "'s";
+				}
 			}
 
 		}
