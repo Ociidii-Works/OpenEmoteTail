@@ -3,7 +3,7 @@
 string ver = "3.7.6";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
-integer bGender = 0;                // set default gender here.
+integer  bHasDick = 0;                // set default gender here.
 // 0 for FEMALE
 // 1 for MALE
 // integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
@@ -47,7 +47,7 @@ fSetGender(integer iNewGender)
 		sGenderHis = "his";
 		sGenderHeCap = "He";
 	}
-	bGender = iNewGender;
+	 bHasDick = iNewGender;
 }
 memstats(string type)
 {
@@ -117,7 +117,7 @@ init()
 	{
 		sOwnerPossessive = "'s";
 	}
-	fSetGender(bGender);
+	fSetGender( bHasDick);
 	memstats(et);
 }
 //// Menus ////
@@ -393,7 +393,7 @@ default
 		{
 			if(m == "Lick Genitals")
 			{
-				if(bGender == 1){
+				if( bHasDick == 1){
 					llListenRemove(iListenHandle);
 					llSay(0,n + " bends down in front of " + sOwnerName + ", slowly moving their hands to reach " + sOwnerName + sOwnerPossessive + " butt, squeezing it softly with one hand as they grab his cock, slowly licking it up and down while looking at him...");
 				}
