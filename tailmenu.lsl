@@ -53,9 +53,9 @@ memstats(string type)
 {
 	if(iShowMemStats)
 	{
-		dm(5,type,(string)llGetMemoryLimit()+" kb allocated");
-		dm(5,type,(string)llGetUsedMemory()+" kb used");
-		dm(5,type,(string)llGetFreeMemory()+" kb free");
+		dm(5,type,(string)llGetMemoryLimit() + " kb allocated");
+		dm(5,type,(string)llGetUsedMemory() + " kb used");
+		dm(5,type,(string)llGetFreeMemory() + " kb free");
 	}
 }
 dm(integer type, string e, string m)
@@ -72,46 +72,46 @@ dm(integer type, string e, string m)
 			the actual message
 	*/
 	if(type == 5)
-		 llRegionSayTo(kOwnerKey,0, "D:"+e+" "+ m);
+		 llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
 
-	m = " "+llStringTrim(m,0x3);
+	m = " " + llStringTrim(m,0x3);
 	if(type == 1 && MessagesLevel >= 1)
-		llRegionSayTo(kOwnerKey,0, "E:"+e+" "+ m);
+		llRegionSayTo(kOwnerKey,0, "E:" + e + " " + m);
 
 	if(type == 2 && MessagesLevel >= 2)
-		llRegionSayTo(kOwnerKey,0, "W:"+e+" "+ m);
+		llRegionSayTo(kOwnerKey,0, "W:" + e + " " + m);
 
 	if(type == 3 && MessagesLevel >= 3)
-		llRegionSayTo(kOwnerKey,0, "I:"+e+" "+ m);
+		llRegionSayTo(kOwnerKey,0, "I:" + e + " " + m);
 
 	if(type == 4 && MessagesLevel >= 4)
-		llRegionSayTo(kOwnerKey,0, "D:"+e+" "+ m);
+		llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
 }
 // twitch(string times)
 // {
 //     if(useTwitcher == 1)
 //     {
-//         llMessageLinked(LINK_THIS, 0, "t "+times, "");
+//         llMessageLinked(LINK_THIS, 0, "t " + times, "");
 //     }
 // }
 string Key2Link(key k)
 {
-	return "[secondlife:///app/agent/"+(string)k
-	+ "/about "+llGetDisplayName(k)+"]";
+	return "[secondlife:///app/agent/" + (string)k
+	 + "/about " + llGetDisplayName(k) + "]";
 }
 init()
 {
 	kOwnerKey = llGetOwner();
 	//Message stuff
 	string et = "init";
-	dm(4,et,"Running OET v"+ver+"...");
+	dm(4,et,"Running OET v" + ver + "...");
 	sObjectName = llGetObjectName();
 	sOwnerName = llGetDisplayName(kOwnerKey);
 	string nameEnd = llGetSubString(sOwnerName, -1, -1);
 	if (nameEnd == "s")
 	{
 		sOwnerPossessive = "'";
-		dm(3,et,"This is "+sOwnerName + sOwnerPossessive+ " tail.");
+		dm(3,et,"This is " + sOwnerName + sOwnerPossessive + " tail.");
 	}
 	else
 	{
@@ -132,9 +132,9 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
 {
 	string et = "fBuildMenu";
 	if(MessagesLevel>2) memstats(et);
-	dm(4,et,"Received Menu Type: "+(string)bInternalMenuSelect);
-	dm(4,et,"Received Key: "+(string)kToucherKey);
-	iChannel = 0x80000000 | (integer)("0x"+(string)llDetectedKey(0));
+	dm(4,et,"Received Menu Type: " + (string)bInternalMenuSelect);
+	dm(4,et,"Received Key: " + (string)kToucherKey);
+	iChannel = 0x80000000 | (integer)("0x" + (string)llDetectedKey(0));
 	dm(4,et,"Channel = " + (string)iChannel);
 	iListenHandle = llListen(iChannel, "", kToucherKey, "");
 	//// Owner Menu ////
@@ -265,7 +265,7 @@ default
 		//string m = llToLower(m);
 		n=Key2Link(kToucherKey);
 		string et = "listen";
-		dm(4,et,n+" selected "+m);
+		dm(4,et,n + " selected " + m);
 		//         n = llGetDisplayName(i);
 		// tail commands
 		if(bMenuType == 0)
@@ -309,7 +309,7 @@ default
 			{
 				llListenRemove(iListenHandle);
 				llSetObjectName("");
-				llSay(0,n+" waggles " + sGenderHis + " tail happily!");
+				llSay(0,n + " waggles " + sGenderHis + " tail happily!");
 				llSetObjectName(sObjectName);
 				// twitch("7");
 			}
@@ -339,44 +339,44 @@ default
 			if(m == "Nom On")
 			{
 				llListenRemove(iListenHandle);
-				llSay(0,n+" grabs and noms on "+sOwnerName + sOwnerPossessive+ " tail. "+sOwnerName+" looks back at "+sGenderHis+" tail to make sure "+n+" did not drool all over it.");
+				llSay(0,n + " grabs and noms on " + sOwnerName + sOwnerPossessive + " tail. " + sOwnerName + " looks back at " + sGenderHis + " tail to make sure " + n + " did not drool all over it.");
 			}
 			else if(m == "Chew On")
 			{
-				llSay(0,n+" starts to chew on " +sOwnerName + sOwnerPossessive+" tail. "+sOwnerName+" is not too sure how to feel about this o.o...");
+				llSay(0,n + " starts to chew on " + sOwnerName + sOwnerPossessive + " tail. " + sOwnerName + " is not too sure how to feel about this o.o...");
 			}
 			else if(m == "Bite")
 			{
-				llSay(0,n+" bites down on "+sOwnerName + sOwnerPossessive+" tail! >w<");
+				llSay(0,n + " bites down on " + sOwnerName + sOwnerPossessive + " tail! >w<");
 			}
 			else if(m == "Pet")
 			{
-				llSay(0,n+" takes a hold of "+sOwnerName + sOwnerPossessive+" tail and starts petting it! ♥");
+				llSay(0,n + " takes a hold of " + sOwnerName + sOwnerPossessive + " tail and starts petting it! ♥");
 			}
 			else if(m == "Tug")
 			{
-				llSay(0,n+" grabs and tugs hard on "+sOwnerName + sOwnerPossessive+ " tail! "+sOwnerName+" tugs back on "+n + sToucherPossessive+" ear! :3");
+				llSay(0,n + " grabs and tugs hard on " + sOwnerName + sOwnerPossessive + " tail! " + sOwnerName + " tugs back on " + n + sToucherPossessive + " ear! :3");
 			}
 			else if(m == "Grab")
 			{
-				llSay(0,n+" grabs "+sOwnerName + sOwnerPossessive+ " tail and just holds it. "+sOwnerName+" looks back at "+n+".");
+				llSay(0,n + " grabs " + sOwnerName + sOwnerPossessive + " tail and just holds it. " + sOwnerName + " looks back at " + n + ".");
 			}
 			else if(m == "Play")
 			{
-				llSay(0,sOwnerName+" swishes "+sGenderHis+" tail about. "+n+" grabs it and starts tugging it playfully.");
+				llSay(0,sOwnerName + " swishes " + sGenderHis + " tail about. " + n + " grabs it and starts tugging it playfully.");
 			}
 			else if(m == "Hug")
 			{
-				llSay(0,n+" grabs "+sOwnerName + sOwnerPossessive+" tail and gives it a big hug! ♥");
+				llSay(0,n + " grabs " + sOwnerName + sOwnerPossessive + " tail and gives it a big hug! ♥");
 			}
 			else if(m == "Hold")
 			{
-				llSay(0,n+" grabs and holds "+sOwnerName + sOwnerPossessive+" tail, refusing to let "+sGenderHim+" go!");
+				llSay(0,n + " grabs and holds " + sOwnerName + sOwnerPossessive + " tail, refusing to let " + sGenderHim + " go!");
 			}
 			else if(m == "Fluff")
 			{
 				llListenRemove(iListenHandle);
-				llSay(0,n+" fluffs " + sOwnerName + sOwnerPossessive + " tail, making it nice and soft. ^^");
+				llSay(0,n + " fluffs " + sOwnerName + sOwnerPossessive + " tail, making it nice and soft. ^^");
 			}
 		}
 		/// Adult Emotes ////
@@ -386,33 +386,33 @@ default
 			{
 				if(bGender == 1){
 					llListenRemove(iListenHandle);
-					llSay(0,n+" bends down in front of " + sOwnerName + ", slowly moving their hands to reach " + sOwnerName + sOwnerPossessive + " butt, squeezing it softly with one hand as they grab his cock,  slowly licking it up and down while looking at him...");
+					llSay(0,n + " bends down in front of " + sOwnerName + ", slowly moving their hands to reach " + sOwnerName + sOwnerPossessive + " butt, squeezing it softly with one hand as they grab his cock, slowly licking it up and down while looking at him...");
 				}
 				else{
 					llListenRemove(iListenHandle);
-					llSay(0,n+" bends down in front of " + sOwnerName + ", slowly kissing her lap and then put their mouth on her pussy,\n licking slowly...");
+					llSay(0,n + " bends down in front of " + sOwnerName + ", slowly kissing her lap and then put their mouth on her pussy,\n licking slowly...");
 				}
 				// bMenuType = 0;
 			}
 			else if(m == "Lick Butt")
 			{
 				llListenRemove(iListenHandle);
-				llSay(0,n+" bends down and licks " + sOwnerName + sOwnerPossessive + " butt! ♥");
+				llSay(0,n + " bends down and licks " + sOwnerName + sOwnerPossessive + " butt! ♥");
 			}
 			else if(m == "Smack Butt")
 			{
 				llListenRemove(iListenHandle);
-				llSay(0,n+" smacks " + sOwnerName + sOwnerPossessive + " butt!");
+				llSay(0,n + " smacks " + sOwnerName + sOwnerPossessive + " butt!");
 			}
 			else if(m == "Grope")
 			{
 				llListenRemove(iListenHandle);
-				llSay(0,n+" gropes " + sOwnerName + "! ^_~");
+				llSay(0,n + " gropes " + sOwnerName + "! ^_~");
 			}
 			else if(m == "Hump")
 			{
 				llListenRemove(iListenHandle);
-				llSay(0,n+" grabs " + sOwnerName + " from behind and starts humpin!");
+				llSay(0,n + " grabs " + sOwnerName + " from behind and starts humpin!");
 			}
 		}
 			 bMenuType = 0;
@@ -422,7 +422,7 @@ default
 		else
 		{
 			dm(2,et,"Something unexpected happened");
-			//dm(4,et,"Message Received: "+m);
+			//dm(4,et,"Message Received: " + m);
 		}
 	}
 	timer()
