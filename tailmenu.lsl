@@ -12,7 +12,7 @@ string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
-integer MessagesLevel = 4;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
+integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
 integer listen_timeout = 10;
 integer iShowMemStats = FALSE;             // Show Memory statistics
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
