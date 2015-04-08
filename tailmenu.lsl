@@ -11,15 +11,18 @@ integer  bHasDick = 0;                // set default gender here.
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
-integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
+integer MessagesLevel = 4;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
+integer listen_timeout = 10;
 integer iShowMemStats = FALSE;             // Show Memory statistics
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Fluff","Play","Hug","Hold"];
 list list_adult = ["Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
 //// Other variables ////
 key kOwnerKey;                      // avoid calling llGetOwner so often.
+key kLastToucher = NULL_KEY;					// Store the last person that touched the tail
 string sOwnerName;                  // Needed for owner identification
 integer lock = FALSE;               // Boolean for locking capability
+integer bIsInUse = FALSE;			// Boolean to store if the key tail is in use
 integer iChannel;                   // Required for channel reference.
 string sToucherName;                // Required to re-use the name of who is touching the tail
 integer iListenHandle;              // Required for the listener.
@@ -245,27 +248,38 @@ default
 	}
 	touch_end(integer total_number)
 	{
+		key kToucherKey = llDetectedKey(0);
+		dm(4,"touch_end",(string)kToucherKey);
 		if(total_number>0)
 		{
-			key kToucherKey = llDetectedKey(0);
-			llListenRemove(iListenHandle);
-			llSetTimerEvent(15);
-			fBuildMenu(0, llDetectedKey(0));
-			if(kToucherKey != kOwnerKey)
-			{
-				sToucherName = llGetDisplayName(kToucherKey);
-				llOwnerSay(sToucherName + " is touching your tail...");
-				string nameEnd = llGetSubString(sToucherName, -1, -1);
-				if (nameEnd == "s")
+				if ((!bIsInUse) /* is the tail already in use? */
+					&& (kLastToucher != kToucherKey)) // Different person, in this dimension
 				{
-					sToucherPossessive = "'";
+					kLastToucher = kToucherKey; // Store the new key
+					fClearListeners();
+				}
+
+				llListenRemove(iListenHandle);
+				fBuildMenu(0, llDetectedKey(0));
+				if(kToucherKey != kOwnerKey)
+				{
+					sToucherName = llGetDisplayName(kToucherKey);
+					llOwnerSay(sToucherName + " is touching your tail...");
+					string nameEnd = llGetSubString(sToucherName, -1, -1);
+					if (nameEnd == "s")
+					{
+						sToucherPossessive = "'";
+					}
+					else
+					{
+						sToucherPossessive = "'s";
+					}
+					llSetTimerEvent(listen_timeout);
 				}
 				else
 				{
-					sToucherPossessive = "'s";
+					llSetTimerEvent(3);
 				}
-			}
-
 		}
 	}
 	listen(integer c, string n, key kToucherKey, string m)
