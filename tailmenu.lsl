@@ -4,6 +4,7 @@ string ver = "3.7.9";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
 integer  bHasDick = 0;                // set default gender here.
+string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
 // 0 for FEMALE
 // 1 for MALE
 // integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
@@ -114,7 +115,7 @@ init()
     if (nameEnd == "s")
     {
         sOwnerPossessive = "'";
-        dm(3,et,"This is " + sOwnerName + sOwnerPossessive + " tail.");
+        dm(3,et,"This is " + sOwnerName + sOwnerPossessive + " " + objectType + ".");
     }
     else
     {
@@ -150,12 +151,12 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
             if(!lock) // if not locked
             {
                  dm(4,et,"Is Unlocked");
-                llDialog(kOwnerKey,"\nChange Tail option",["Waggle","Lock","Gender"],iChannel);
+                llDialog(kOwnerKey,"\nChange " + objectType + " option",["Waggle","Lock","Gender"],iChannel);
             }
             else // if locked
             {
                  dm(4,et,"Is Locked");
-                llDialog(kOwnerKey,"\nChange Tail option",["Waggle","Unlock","Gender"],iChannel);
+                llDialog(kOwnerKey,"\nChange " + objectType + " option",["Waggle","Unlock","Gender"],iChannel);
             }
         }
         if(bInternalMenuSelect == 3) // Gender Menu
@@ -264,7 +265,7 @@ default
             if(kToucherKey != kOwnerKey)
             {
                 sToucherName = llGetDisplayName(kToucherKey);
-                llOwnerSay(sToucherName + " is touching your tail...");
+                llOwnerSay(sToucherName + " is touching your " + objectType + "...");
                 string nameEnd = llGetSubString(sToucherName, -1, -1);
                 if (nameEnd == "s")
                 {
@@ -332,7 +333,7 @@ default
             {
                 llListenRemove(iListenHandle);
                 llSetObjectName("");
-                llSay(0,n + " waggles " + sGenderHis + " tail happily!");
+                llSay(0,n + " waggles " + sGenderHis + " " + objectType + " happily!");
                 llSetObjectName(sObjectName);
                 // twitch("7");
             }
@@ -362,44 +363,44 @@ default
             if(m == "Nom On")
             {
                 llListenRemove(iListenHandle);
-                llSay(0,n + " grabs and noms on " + sOwnerName + sOwnerPossessive + " tail. " + sOwnerName + " looks back at " + sGenderHis + " tail to make sure " + n + " did not drool all over it.");
+                llSay(0,n + " grabs and noms on " + sOwnerName + sOwnerPossessive + " " + objectType + ". " + sOwnerName + " looks back at " + sGenderHis + " " + objectType + " to make sure " + n + " did not drool all over it.");
             }
             else if(m == "Chew On")
             {
-                llSay(0,n + " starts to chew on " + sOwnerName + sOwnerPossessive + " tail. " + sOwnerName + " is not too sure how to feel about this o.o...");
+                llSay(0,n + " starts to chew on " + sOwnerName + sOwnerPossessive + " " + objectType + ". " + sOwnerName + " is not too sure how to feel about this o.o...");
             }
             else if(m == "Bite")
             {
-                llSay(0,n + " bites down on " + sOwnerName + sOwnerPossessive + " tail! >w<");
+                llSay(0,n + " bites down on " + sOwnerName + sOwnerPossessive + " " + objectType + "! >w<");
             }
             else if(m == "Pet")
             {
-                llSay(0,n + " takes a hold of " + sOwnerName + sOwnerPossessive + " tail and starts petting it! ♥");
+                llSay(0,n + " takes a hold of " + sOwnerName + sOwnerPossessive + " " + objectType + " and starts petting it! ♥");
             }
             else if(m == "Tug")
             {
-                llSay(0,n + " grabs and tugs hard on " + sOwnerName + sOwnerPossessive + " tail! " + sOwnerName + " tugs back on " + n + sToucherPossessive + " ear! :3");
+                llSay(0,n + " grabs and tugs hard on " + sOwnerName + sOwnerPossessive + " " + objectType + "! " + sOwnerName + " tugs back on " + n + sToucherPossessive + " ear! :3");
             }
             else if(m == "Grab")
             {
-                llSay(0,n + " grabs " + sOwnerName + sOwnerPossessive + " tail and just holds it. " + sOwnerName + " looks back at " + n + ".");
+                llSay(0,n + " grabs " + sOwnerName + sOwnerPossessive + " " + objectType + " and just holds it. " + sOwnerName + " looks back at " + n + ".");
             }
             else if(m == "Play")
             {
-                llSay(0,sOwnerName + " swishes " + sGenderHis + " tail about. " + n + " grabs it and starts tugging it playfully.");
+                llSay(0,sOwnerName + " swishes " + sGenderHis + " " + objectType + " about. " + n + " grabs it and starts tugging it playfully.");
             }
             else if(m == "Hug")
             {
-                llSay(0,n + " grabs " + sOwnerName + sOwnerPossessive + " tail and gives it a big hug! ♥");
+                llSay(0,n + " grabs " + sOwnerName + sOwnerPossessive + " " + objectType + " and gives it a big hug! ♥");
             }
             else if(m == "Hold")
             {
-                llSay(0,n + " grabs and holds " + sOwnerName + sOwnerPossessive + " tail, refusing to let " + sGenderHim + " go!");
+                llSay(0,n + " grabs and holds " + sOwnerName + sOwnerPossessive + " " + objectType + ", refusing to let " + sGenderHim + " go!");
             }
             else if(m == "Fluff")
             {
                 llListenRemove(iListenHandle);
-                llSay(0,n + " fluffs " + sOwnerName + sOwnerPossessive + " tail, making it nice and soft. ^^");
+                llSay(0,n + " fluffs " + sOwnerName + sOwnerPossessive + " " + objectType + ", making it nice and soft. ^^");
             }
         }
         /// Adult Emotes ////
