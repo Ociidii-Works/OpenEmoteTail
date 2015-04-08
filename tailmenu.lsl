@@ -252,34 +252,34 @@ default
         dm(4,"touch_end",(string)kToucherKey);
         if(total_number>0)
         {
-                if ((!bIsInUse) /* is the tail already in use? */
-                    && (kLastToucher != kToucherKey)) // Different person, in this dimension
-                {
-                    kLastToucher = kToucherKey; // Store the new key
-                    fClearListeners();
-                }
+            if ((!bIsInUse) /* is the tail already in use? */
+                && (kLastToucher != kToucherKey)) // Different person, in this dimension
+            {
+                kLastToucher = kToucherKey; // Store the new key
+                fClearListeners();
+            }
 
-                llListenRemove(iListenHandle);
-                fBuildMenu(0, llDetectedKey(0));
-                if(kToucherKey != kOwnerKey)
+            llListenRemove(iListenHandle);
+            fBuildMenu(0, llDetectedKey(0));
+            if(kToucherKey != kOwnerKey)
+            {
+                sToucherName = llGetDisplayName(kToucherKey);
+                llOwnerSay(sToucherName + " is touching your tail...");
+                string nameEnd = llGetSubString(sToucherName, -1, -1);
+                if (nameEnd == "s")
                 {
-                    sToucherName = llGetDisplayName(kToucherKey);
-                    llOwnerSay(sToucherName + " is touching your tail...");
-                    string nameEnd = llGetSubString(sToucherName, -1, -1);
-                    if (nameEnd == "s")
-                    {
-                        sToucherPossessive = "'";
-                    }
-                    else
-                    {
-                        sToucherPossessive = "'s";
-                    }
-                    llSetTimerEvent(listen_timeout);
+                    sToucherPossessive = "'";
                 }
                 else
                 {
-                    llSetTimerEvent(3);
+                    sToucherPossessive = "'s";
                 }
+                llSetTimerEvent(listen_timeout);
+            }
+            else
+            {
+                llSetTimerEvent(3);
+            }
         }
     }
     listen(integer c, string n, key kToucherKey, string m)
