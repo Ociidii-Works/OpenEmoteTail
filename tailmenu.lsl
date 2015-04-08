@@ -137,7 +137,7 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
     if(MessagesLevel>2) memstats(et);
     dm(4,et,"Received Menu Type: " + (string)bInternalMenuSelect);
     dm(4,et,"Received Key: " + (string)kToucherKey);
-    iChannel = 0x80000000 | (integer)("0x" + (string)llDetectedKey(0));
+    iChannel = 0x80000000 | (integer)llFrand(368) + (integer)("0x" + (string)llDetectedKey(0));
     dm(4,et,"Channel = " + (string)iChannel);
     iListenHandle = llListen(iChannel, "", kToucherKey, "");
     //// Owner Menu ////
