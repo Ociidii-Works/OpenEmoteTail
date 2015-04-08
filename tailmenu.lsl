@@ -1,6 +1,6 @@
 // The latest version of this script can be found at
 // https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
-string ver = "3.7.12";
+string ver = "3.7.12b";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
 integer  bHasDick = 0;                // set default gender here.
@@ -51,7 +51,12 @@ fSetGender(integer iNewGender)
         sGenderHis = "his";
         sGenderHeCap = "He";
     }
-     bHasDick = iNewGender;
+    bHasDick = iNewGender;
+    saveToDesc();
+}
+saveToDesc()
+{
+    llSetObjectDesc("#OET:g=" + (string)bHasDick + ",t=" + objectType);
 }
 memstats(string type)
 {
@@ -121,6 +126,7 @@ init()
     {
         sOwnerPossessive = "'s";
     }
+    llGetSubString(string src, integer start, integer end)
     fSetGender( bHasDick);
     memstats(et);
 }
