@@ -126,7 +126,6 @@ init()
     {
         sOwnerPossessive = "'s";
     }
-    llGetSubString(string src, integer start, integer end)
     fSetGender( bHasDick);
     memstats(et);
 }
