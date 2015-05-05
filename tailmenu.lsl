@@ -1,6 +1,6 @@
 // The latest version of this script can be found at
 // https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
-string ver = "3.7.12b";
+string ver = "3.7.14b";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
 integer  bHasDick = 0;                // set default gender here.
@@ -12,9 +12,12 @@ string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
+integer timeout = 15;
+float touchDelay = 1.0;
+float time;
 integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
-integer listen_timeout = 10;
-integer iShowMemStats = FALSE;             // Show Memory statistics
+integer listen_timeout = 15;
+integer iShowMemStats = 0;             // Show Memory statistics
 list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Fluff","Play","Hug","Hold"];
 list list_adult = ["Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
@@ -252,23 +255,38 @@ default
         // Menu stuff
         init();
     }
+    touch_start(integer num_detected)
+    {
+        time = llGetTime();
+    }
     touch_end(integer total_number)
     {
         key kToucherKey = llDetectedKey(0);
         dm(4,"touch_end",(string)kToucherKey);
+            if(kToucherKey == kOwnerKey)
+            {
+                if (llGetTime() >= (time + touchDelay))
+                {
+                    //llOwnerSay("Level 3");
+                    fBuildMenu(0, kToucherKey);
+                }
+            }
         if(total_number>0)
         {
+            //llOwnerSay("Level 1");
             if ((!bIsInUse) /* is the tail already in use? */
                 && (kLastToucher != kToucherKey)) // Different person, in this dimension
             {
+                //llOwnerSay("Level 2");
                 kLastToucher = kToucherKey; // Store the new key
                 fClearListeners();
             }
 
             llListenRemove(iListenHandle);
-            fBuildMenu(0, llDetectedKey(0));
-            if(kToucherKey != kOwnerKey)
+            if (kToucherKey != kOwnerKey)
             {
+                //llOwnerSay("Level 4");
+                fBuildMenu(0, llDetectedKey(0));
                 sToucherName = llGetDisplayName(kToucherKey);
                 llOwnerSay(sToucherName + " is touching your " + objectType + "...");
                 string nameEnd = llGetSubString(sToucherName, -1, -1);
@@ -280,12 +298,13 @@ default
                 {
                     sToucherPossessive = "'s";
                 }
-                llSetTimerEvent(listen_timeout);
+               llSetTimerEvent(listen_timeout);
             }
             else
             {
-                llSetTimerEvent(3);
+                llSetTimerEvent(listen_timeout);
             }
+            time = 0;
         }
     }
     listen(integer c, string n, key kToucherKey, string m)
