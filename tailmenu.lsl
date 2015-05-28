@@ -12,7 +12,6 @@ string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
-integer timeout = 15;
 float touchDelay = 1.0;
 float time;
 integer MessagesLevel = 0;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
