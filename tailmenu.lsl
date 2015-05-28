@@ -310,11 +310,12 @@ default
     }
     listen(integer c, string n, key kToucherKey, string m)
     {
-        if(!c) return;
-        //string m = llToLower(m);
-        n=Key2Link(kToucherKey);
+        if(!c) return; // Don't listen on channel 0
         string et = "listen";
+        dm(4,et,"Channel received: " + (string)c);
+        //string m = llToLower(m);
         dm(4,et,n + " selected " + m);
+        n=Key2Link(kToucherKey);
         //         n = llGetDisplayName(i);
         // tail commands
         if(bMenuType == 0)
