@@ -274,7 +274,8 @@ default
         {
             //llOwnerSay("Level 1");
             if ((!bIsInUse) /* is the tail already in use? */
-                && (kLastToucher != kToucherKey)) // Different person, in this dimension
+                && (kLastToucher != NULL_KEY) // Not a null key (default value)
+                & (kLastToucher != kToucherKey)) // Different person, in this dimension
             {
                 //llOwnerSay("Level 2");
                 kLastToucher = kToucherKey; // Store the new key
