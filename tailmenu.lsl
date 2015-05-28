@@ -1,6 +1,6 @@
 // The latest version of this script can be found at
 // https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
-string ver = "3.7.14b";
+string ver = "3.7.16";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
 integer  bHasDick = 0;                // set default gender here.
