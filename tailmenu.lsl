@@ -278,6 +278,7 @@ default
             {
                 //llOwnerSay("Level 2");
                 kLastToucher = kToucherKey; // Store the new key
+                dm(4,"touch_end","Clearing listener because toucher changed");
                 fClearListeners();
             }
 
