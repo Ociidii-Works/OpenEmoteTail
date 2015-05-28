@@ -270,7 +270,7 @@ default
                     fBuildMenu(0, kToucherKey);
                 }
             }
-        if(total_number>0)
+        if(total_number > 0)
         {
             //llOwnerSay("Level 1");
             if ((!bIsInUse) /* is the tail already in use? */
