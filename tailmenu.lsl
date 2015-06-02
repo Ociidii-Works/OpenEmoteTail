@@ -262,14 +262,14 @@ default
     {
         key kToucherKey = llDetectedKey(0);
         dm(4,"touch_end",(string)kToucherKey);
-            if(kToucherKey == kOwnerKey)
+        if(kToucherKey == kOwnerKey)
+        {
+            if (llGetTime() >= (time + touchDelay))
             {
-                if (llGetTime() >= (time + touchDelay))
-                {
-                    //llOwnerSay("Level 3");
-                    fBuildMenu(0, kToucherKey);
-                }
+                //llOwnerSay("Level 3");
+                fBuildMenu(0, kToucherKey);
             }
+        }
         if(total_number > 0)
         {
             //llOwnerSay("Level 1");
