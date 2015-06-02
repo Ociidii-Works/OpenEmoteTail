@@ -1,6 +1,6 @@
 // The latest version of this script can be found at
 // https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
-string ver = "3.7.17";
+string ver = "3.7.18";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
 string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
