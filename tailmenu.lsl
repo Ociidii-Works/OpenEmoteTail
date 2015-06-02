@@ -3,8 +3,8 @@
 string ver = "3.7.16";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
-integer  bHasDick = 0;                // set default gender here.
 string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
+integer  bHasDick = 0;                // set default gender here.
 // 0 for FEMALE
 // 1 for MALE
 // integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
