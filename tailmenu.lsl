@@ -442,7 +442,7 @@ default
                 }
                 else{
                     llListenRemove(iListenHandle);
-                    llSay(0,n + " bends down in front of " + sOwnerName + ", slowly kissing her lap and then put their mouth on her pussy,\n licking slowly...");
+                    llSay(0,n + " bends down in front of " + sOwnerName + ", slowly kissing her lap and then put their mouth on her pussy, licking slowly...");
                 }
                 // bMenuType = 0;
             }
