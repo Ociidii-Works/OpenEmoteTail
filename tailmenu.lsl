@@ -285,7 +285,7 @@ default
 
             //dm(4,"touch_end","Removing listener for.., I don't remember");
             //llListenRemove(iListenHandle);
-            return;
+            //return;
             if (kToucherKey != kOwnerKey)
             {
                 //llOwnerSay("Level 4");
