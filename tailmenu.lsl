@@ -7,6 +7,7 @@ string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
 integer  bHasDick = 0;                // set default gender here.
 // 0 for FEMALE
 // 1 for MALE
+integer bLinkForNames = 0;           // Display names in emotes using icon-less SLURL
 integer bLinkForOwner = 1;           // Display owner name in emotes using icon-less SLURL
 // integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
 /////////////////////////////////////////////////////////////////////////
@@ -318,8 +319,14 @@ default
         dm(4,et,"Channel received: " + (string)c);
         //string m = llToLower(m);
         dm(4,et,n + " selected " + m);
-        n=Key2Link(kToucherKey);
-        //         n = llGetDisplayName(i);
+        if (bLinkForNames)
+        {
+            n=Key2Link(kToucherKey);
+        }
+        else
+        {
+            n = llGetDisplayName(kToucherKey);
+        }
         // tail commands
         if(bMenuType == 0)
         {
@@ -362,7 +369,7 @@ default
             {
                 llListenRemove(iListenHandle);
                 llSetObjectName("");
-                llSay(0,n + " waggles " + sGenderHis + " " + objectType + " happily!");
+                llSay(0,"/me " + n + " waggles " + sGenderHis + " " + objectType + " happily!");
                 llSetObjectName(sObjectName);
                 // twitch("7");
             }
@@ -388,7 +395,7 @@ default
         else if(bMenuType >0)
         {
             string sOwnerNameInEmote;
-            if (bLinkForOwner)
+            if (bLinkForNames && bLinkForOwner)
             {
                 sOwnerNameInEmote = Key2Link(kOwnerKey);
             }
@@ -401,27 +408,27 @@ default
             if(m == "Nom On")
             {
                 llListenRemove(iListenHandle);
-                llSay(0,n + " grabs and noms on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ". " + sOwnerNameInEmote + " looks back at " + sGenderHis + " " + objectType + " to make sure " + n + " did not drool all over it.");
+                llSay(0,"/me " + n + " grabs and noms on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ". " + sOwnerNameInEmote + " looks back at " + sGenderHis + " " + objectType + " to make sure " + n + " did not drool all over it.");
             }
             else if(m == "Chew On")
             {
-                llSay(0,n + " starts to chew on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ". " + sOwnerNameInEmote + " is not too sure how to feel about this o.o...");
+                llSay(0,"/me " + n + " starts to chew on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ". " + sOwnerNameInEmote + " is not too sure how to feel about this o.o...");
             }
             else if(m == "Bite")
             {
-                llSay(0,n + " bites down on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + "! >w<");
+                llSay(0,"/me " + n + " bites down on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + "! >w<");
             }
             else if(m == "Pet")
             {
-                llSay(0,n + " takes a hold of " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + " and starts petting it! ♥");
+                llSay(0,"/me " + n + " takes a hold of " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + " and starts petting it! ♥");
             }
             else if(m == "Tug")
             {
-                llSay(0,n + " grabs and tugs hard on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + "! " + sOwnerNameInEmote + " tugs back on " + n + sToucherPossessive + " ear! :3");
+                llSay(0,"/me " + n + " grabs and tugs hard on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + "! " + sOwnerNameInEmote + " tugs back on " + n + sToucherPossessive + " ear! :3");
             }
             else if(m == "Grab")
             {
-                llSay(0,n + " grabs " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + " and just holds it. " + sOwnerNameInEmote + " looks back at " + n + ".");
+                llSay(0,"/me " + n + " grabs " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + " and just holds it. " + sOwnerNameInEmote + " looks back at " + n + ".");
             }
             else if(m == "Play")
             {
@@ -429,16 +436,16 @@ default
             }
             else if(m == "Hug")
             {
-                llSay(0,n + " grabs " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + " and gives it a big hug! ♥");
+                llSay(0,"/me " + n + " grabs " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + " and gives it a big hug! ♥");
             }
             else if(m == "Hold")
             {
-                llSay(0,n + " grabs and holds " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ", refusing to let " + sGenderHim + " go!");
+                llSay(0,"/me " + n + " grabs and holds " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ", refusing to let " + sGenderHim + " go!");
             }
             else if(m == "Fluff")
             {
                 llListenRemove(iListenHandle);
-                llSay(0,n + " fluffs " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ", making it nice and soft. ^^");
+                llSay(0,"/me " + n + " fluffs " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ", making it nice and soft. ^^");
             }
         }
         /// Adult Emotes ////
@@ -448,33 +455,33 @@ default
             {
                 if( bHasDick == 1){
                     llListenRemove(iListenHandle);
-                    llSay(0,n + " bends down in front of " + sOwnerNameInEmote + ", slowly moving their hands to reach " + sOwnerNameInEmote + sOwnerPossessive + " butt, squeezing it softly with one hand as they grab his cock, slowly licking it up and down while looking at him...");
+                    llSay(0,"/me " + n + " bends down in front of " + sOwnerNameInEmote + ", slowly moving their hands to reach " + sOwnerNameInEmote + sOwnerPossessive + " butt, squeezing it softly with one hand as they grab his cock, slowly licking it up and down while looking at him...");
                 }
                 else{
                     llListenRemove(iListenHandle);
-                    llSay(0,n + " bends down in front of " + sOwnerNameInEmote + ", slowly kissing her lap and then put their mouth on her pussy, licking slowly...");
+                    llSay(0,"/me " + n + " bends down in front of " + sOwnerNameInEmote + ", slowly kissing her lap and then put their mouth on her pussy, licking slowly...");
                 }
                 // bMenuType = 0;
             }
             else if(m == "Lick Butt")
             {
                 llListenRemove(iListenHandle);
-                llSay(0,n + " bends down and licks " + sOwnerNameInEmote + sOwnerPossessive + " butt! ♥");
+                llSay(0,"/me " + n + " bends down and licks " + sOwnerNameInEmote + sOwnerPossessive + " butt! ♥");
             }
             else if(m == "Smack Butt")
             {
                 llListenRemove(iListenHandle);
-                llSay(0,n + " smacks " + sOwnerNameInEmote + sOwnerPossessive + " butt!");
+                llSay(0,"/me " + n + " smacks " + sOwnerNameInEmote + sOwnerPossessive + " butt!");
             }
             else if(m == "Grope")
             {
                 llListenRemove(iListenHandle);
-                llSay(0,n + " gropes " + sOwnerNameInEmote + "! ^_~");
+                llSay(0,"/me " + n + " gropes " + sOwnerNameInEmote + "! ^_~");
             }
             else if(m == "Hump")
             {
                 llListenRemove(iListenHandle);
-                llSay(0,n + " grabs " + sOwnerNameInEmote + " from behind and starts humpin!");
+                llSay(0,"/me " + n + " grabs " + sOwnerNameInEmote + " from behind and starts humpin!");
             }
         }
              bMenuType = 0;
