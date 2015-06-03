@@ -407,7 +407,6 @@ default
 
             if(m == "Nom On")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n + " grabs and noms on " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ". " + sOwnerNameInEmote + " looks back at " + sGenderHis + " " + objectType + " to make sure " + n + " did not drool all over it.");
             }
             else if(m == "Chew On")
@@ -444,7 +443,6 @@ default
             }
             else if(m == "Fluff")
             {
-                llListenRemove(iListenHandle);
                 llSay(0,n + " fluffs " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ", making it nice and soft. ^^");
             }
         }
