@@ -185,8 +185,6 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
         else // if not locked and not owner
         {
             dm(4,et,"Entering Others Menu");
-            llSetObjectName(" ");
-            llSetObjectName(sObjectName);
             if(bInternalMenuSelect == 0) // Root Menu
             {
                 dm(4,et,"Building Choice Menu");
@@ -394,6 +392,7 @@ default
         //// Soft Emotes ////
         else if(bMenuType >0)
         {
+            llSetObjectName(" ");
             string sOwnerNameInEmote;
             if (bLinkForNames && bLinkForOwner)
             {
@@ -445,10 +444,12 @@ default
             {
                 llSay(0,n + " fluffs " + sOwnerNameInEmote + sOwnerPossessive + " " + objectType + ", making it nice and soft. ^^");
             }
+            llSetObjectName(sObjectName);
         }
         /// Adult Emotes ////
         else if(bMenuType == 2) // 1
         {
+            llSetObjectName(" ");
             if(m == "Lick Genitals")
             {
                 if( bHasDick == 1){
@@ -481,6 +482,7 @@ default
                 llListenRemove(iListenHandle);
                 llSay(0,n + " grabs " + sOwnerNameInEmote + " from behind and starts humpin!");
             }
+            llSetObjectName(sObjectName);
         }
              bMenuType = 0;
             fClearListeners();
