@@ -251,13 +251,13 @@ default
     }
     on_rez(integer start_param)
     {
-        if(start_param)
-        {
-            init();
-            llSleep(2);
-            llDialog(llGetOwner(),"Sausage or Tacos?",["Sausage","Tacos"],iChannel);
-            // twitch("2");
-        }
+        // Do nothing if attached (login?)
+        if(llGetAttached())
+            return;
+        init();
+        llSleep(2);
+        llDialog(llGetOwner(),"Sausage or Tacos?",["Sausage","Tacos"],iChannel);
+        // twitch("2");
     }
     state_entry()
     {
