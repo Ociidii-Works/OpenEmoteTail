@@ -1,6 +1,6 @@
 // The latest version of this script can be found at
 // https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
-string ver = "3.7.24";
+string ver = "3.7.25";
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
 string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
@@ -57,6 +57,16 @@ fSetGender(integer iNewGender)
     }
     bHasDick = iNewGender;
     saveToDesc();
+}
+fDetectGender()
+{
+    // simplistic gender auto-detection.
+    // string desc = llGetObjectDesc();
+    // if (desc == "")
+    // {
+        bHasDick = (integer)llList2Integer(llGetObjectDetails(kOwnerKey,[OBJECT_BODY_SHAPE_TYPE]),0);
+        saveToDesc();
+    // }
 }
 saveToDesc()
 {
@@ -120,12 +130,7 @@ init()
     dm(4,et,"Running OET v" + ver + "...");
     sObjectName = llGetObjectName();
     sOwnerName = llGetDisplayName(kOwnerKey);
-    // simplistic gender auto-detection.
-    string desc = llGetObjectDesc();
-    if (desc == "")
-    {
-        bHasDick = (integer)llList2Integer(llGetObjectDetails(kOwnerKey,[OBJECT_BODY_SHAPE_TYPE]),0);
-    }
+    fDetectGender();
     string nameEnd = llGetSubString(sOwnerName, -1, -1);
     if (nameEnd == "s")
     {
