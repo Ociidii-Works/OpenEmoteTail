@@ -120,6 +120,12 @@ init()
     dm(4,et,"Running OET v" + ver + "...");
     sObjectName = llGetObjectName();
     sOwnerName = llGetDisplayName(kOwnerKey);
+    // simplistic gender auto-detection.
+    string desc = llGetObjectDesc();
+    if (desc == "")
+    {
+        bHasDick = (integer)llList2Integer(llGetObjectDetails(kOwnerKey,[OBJECT_BODY_SHAPE_TYPE]),0);
+    }
     string nameEnd = llGetSubString(sOwnerName, -1, -1);
     if (nameEnd == "s")
     {
