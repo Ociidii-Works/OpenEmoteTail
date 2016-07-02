@@ -84,23 +84,23 @@ dm(integer type, string e, string m)
             event the message comes from
         m
             the actual message
-            */
-            if(type == 5)
-            llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
+    */
+    if(type == 5)
+    llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
 
-            m = " " + llStringTrim(m,0x3);
-            if(type == 1 && MessagesLevel >= 1)
-            llRegionSayTo(kOwnerKey,0, "E:" + e + " " + m);
+    m = " " + llStringTrim(m,0x3);
+    if(type == 1 && MessagesLevel >= 1)
+    llRegionSayTo(kOwnerKey,0, "E:" + e + " " + m);
 
-            if(type == 2 && MessagesLevel >= 2)
-            llRegionSayTo(kOwnerKey,0, "W:" + e + " " + m);
+    if(type == 2 && MessagesLevel >= 2)
+    llRegionSayTo(kOwnerKey,0, "W:" + e + " " + m);
 
-            if(type == 3 && MessagesLevel >= 3)
-            llRegionSayTo(kOwnerKey,0, "I:" + e + " " + m);
+    if(type == 3 && MessagesLevel >= 3)
+    llRegionSayTo(kOwnerKey,0, "I:" + e + " " + m);
 
-            if(type == 4 && MessagesLevel >= 4)
-            llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
-        }
+    if(type == 4 && MessagesLevel >= 4)
+    llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
+}
 // twitch(string times)
 // {
 //     if(useTwitcher == 1)
@@ -173,17 +173,17 @@ fBuildMenu(integer bInternalMenuSelect)
             string lockbuttonText;
             if(!lock) // if not locked
             {
-               dm(4,et,"Is Unlocked");
-               lockbuttonText = "Lock";
-           }
+                dm(4,et,"Is Unlocked");
+                lockbuttonText = "Lock";
+            }
             else // if locked
             {
-               dm(4,et,"Is Locked");
-               lockbuttonText = "Unlock";
-           }
-           xlGenerateDialogText("\nChange " + objectType + " option",["Waggle",lockbuttonText,"Gender"]);
-       }
-       else if(bInternalMenuSelect == 3) // Gender Menu
+                dm(4,et,"Is Locked");
+                lockbuttonText = "Unlock";
+            }
+            xlGenerateDialogText("\nChange " + objectType + " option",["Waggle",lockbuttonText,"Gender"]);
+        }
+        else if(bInternalMenuSelect == 3) // Gender Menu
         {
             dm(3,et,"Entering Gender Menu");
             xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
@@ -321,7 +321,7 @@ default
         }
         else
         {
-            llSetTimerEvent(listen_timeout);
+         llSetTimerEvent(listen_timeout);
         }
         time = 0;
     }
