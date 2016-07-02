@@ -151,7 +151,7 @@ init()
 xlGenerateDialogText(string sHelpText, list lButtons)
 {
     sHelpText = "Based on [https://github.com/Ociidii-Works/OpenEmoteTail OpenEmoteTail] by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
-    llDialog(kOwnerKey,sHelpText,lButtons,iChannel);
+    llDialog(kToucherKey,sHelpText,lButtons,iChannel);
 }
 integer bMenuType;
 fBuildMenu(integer bInternalMenuSelect)
