@@ -24,6 +24,7 @@ list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Fluff","Play","H
 list list_adult = ["Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
 //// Other variables ////
 key kOwnerKey;                      // avoid calling llGetOwner so often.
+key kToucherKey;
 key kLastToucher = NULL_KEY;                    // Store the last person that touched the tail
 string sOwnerName;                  // Needed for owner identification
 integer lock = FALSE;               // Boolean for locking capability
@@ -146,8 +147,14 @@ init()
 2: Adult
 3: Gender Menu
 */
+
+xlGenerateDialogText(string sHelpText, list lButtons)
+{
+    sHelpText = "Based on [https://github.com/Ociidii-Works/OpenEmoteTail OpenEmoteTail] by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
+    llDialog(kOwnerKey,sHelpText,lButtons,iChannel);
+}
 integer bMenuType;
-fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
+fBuildMenu(integer bInternalMenuSelect)
 {
     string et = "fBuildMenu";
     if(MessagesLevel>2) memstats(et);
@@ -163,21 +170,23 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
         if(bInternalMenuSelect == 0)
         { // Owner Menu Root
             dm(3,et,"Checking Lock");
+            string lockbuttonText;
             if(!lock) // if not locked
             {
                dm(4,et,"Is Unlocked");
-               llDialog(kOwnerKey,"\nChange " + objectType + " option",["Waggle","Lock","Gender"],iChannel);
+               lockbuttonText = "Lock";
            }
             else // if locked
             {
                dm(4,et,"Is Locked");
-               llDialog(kOwnerKey,"\nChange " + objectType + " option",["Waggle","Unlock","Gender"],iChannel);
+               lockbuttonText = "Unlock";
            }
+           xlGenerateDialogText("\nChange " + objectType + " option",["Waggle",lockbuttonText,"Gender"]);
        }
-        if(bInternalMenuSelect == 3) // Gender Menu
+       else if(bInternalMenuSelect == 3) // Gender Menu
         {
             dm(3,et,"Entering Gender Menu");
-            llDialog(kToucherKey,"Sausage or Tacos?",["Sausage","Tacos"],iChannel);
+            xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
         }
     }
     //// Others Menu ////
@@ -194,19 +203,19 @@ fBuildMenu(integer bInternalMenuSelect, key kToucherKey)
             if(bInternalMenuSelect == 0) // Root Menu
             {
                 dm(4,et,"Building Choice Menu");
-                llDialog(kToucherKey,"Chose an Emote type",lEmoteTypeMenu,iChannel);
+                xlGenerateDialogText("Chose an Emote type",lEmoteTypeMenu);
                 llSetTimerEvent(listen_timeout);
             }
             else if(bInternalMenuSelect == 1) // Soft Menu
             {
                 dm(4,et,"Building Soft Menu");
-                llDialog(kToucherKey,"Okay, what do you want to do?",list_soft,iChannel);
+                xlGenerateDialogText("Okay, what do you want to do?",list_soft);
                 llSetTimerEvent(listen_timeout);
             }
             else if(bInternalMenuSelect == 2) // Adult Menu
             {
                 dm(4,et,"Building Adult Menu");
-                llDialog(kToucherKey,"Feeling naughty, eh? How much?",list_adult,iChannel);
+                xlGenerateDialogText("Feeling naughty, eh? How much?",list_adult);
                 llSetTimerEvent(listen_timeout);
             }
         }
@@ -256,7 +265,8 @@ default
         }
         init();
         llSleep(2);
-        llDialog(llGetOwner(),"Sausage or Tacos?",["Sausage","Tacos"],iChannel);
+        kToucherKey = kOwnerKey;
+        xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
         // twitch("2");
     }
     state_entry()
@@ -271,7 +281,7 @@ default
     }
     touch_end(integer total_number)
     {
-        key kToucherKey = llDetectedKey(0);
+        kToucherKey = llDetectedKey(0);
         dm(4,"touch_end",(string)kToucherKey);
         //llOwnerSay("Level 1");
         if ((bMenuInUse) /* is the tail already in use? */
@@ -289,13 +299,13 @@ default
             if (llGetTime() >= (time + touchDelay))
             {
                 //llOwnerSay("Level 3");
-                fBuildMenu(0, kToucherKey);
+                fBuildMenu(0);
             }
         }
         if (kToucherKey != kOwnerKey)
         {
             //llOwnerSay("Level 4");
-            fBuildMenu(0, llDetectedKey(0));
+            fBuildMenu(0);
             sToucherName = llGetDisplayName(kToucherKey);
             llOwnerSay(sToucherName + " is touching your " + objectType + "...");
             string nameEnd = llGetSubString(sToucherName, -1, -1);
@@ -337,22 +347,22 @@ default
             {
                 llListenRemove(iListenHandle);
                 bMenuType = 1;
-                fBuildMenu(bMenuType, kToucherKey);
+                fBuildMenu(bMenuType);
             }
             else if(m == "Adult Emotes")
             {
                 llListenRemove(iListenHandle);
                 bMenuType = 2;
-                fBuildMenu(bMenuType, kToucherKey);
+                fBuildMenu(bMenuType);
             }
             else if(m == "Gender") // 2
             {
                 bMenuType = 3;
-                fBuildMenu(bMenuType, kToucherKey);
+                fBuildMenu(bMenuType);
             }
             else if(m == "Emote")
             {
-                llDialog(kToucherKey,"What kind of emotes do you want to do?",lEmoteTypeMenu,iChannel);
+                xlGenerateDialogText("What kind of emotes do you want to do?",lEmoteTypeMenu);
             }
             else if(m == "Lock")
             {
