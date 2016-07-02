@@ -271,7 +271,7 @@ default
     }
     state_entry()
     {
-        llSetMemoryLimit(1024*28);
+        llSetMemoryLimit(llGetUsedMemory() + 2048);
         // Menu stuff
         init();
     }
