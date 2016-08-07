@@ -1,3 +1,7 @@
+// Open Emote Tail
+// Author: Xenhat Liamano
+
+// The latest version of this script can always be found at
 // https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
 string ver = "3.7.26";
 // Todo: Use StringReplace instead of variables for Him/Her/His
