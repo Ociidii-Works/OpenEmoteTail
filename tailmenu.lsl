@@ -9,7 +9,9 @@ integer  bHasDick = 0;                // set default gender here.
 // 1 for MALE
 integer bLinkForNames = 0;           // Display names in emotes using icon-less SLURL
 integer bLinkForOwner = 1;           // Display owner name in emotes using icon-less SLURL
-// integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
+integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
+
+
 /////////////////////////////////////////////////////////////////////////
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
@@ -101,13 +103,13 @@ dm(integer type, string e, string m)
     if(type == 4 && MessagesLevel >= 4)
     llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
 }
-// twitch(string times)
-// {
-//     if(useTwitcher == 1)
-//     {
-//         llMessageLinked(LINK_THIS, 0, "t " + times, "");
-//     }
-// }
+twitch(string times)
+{
+    if(useTwitcher == 1)
+    {
+        llMessageLinked(LINK_THIS, 0, "t " + times, "");
+    }
+}
 string Key2Link(key k)
 {
     return "[secondlife:///app/agent/" + (string)k
