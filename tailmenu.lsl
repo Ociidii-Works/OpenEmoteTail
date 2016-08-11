@@ -279,6 +279,15 @@ default
         llSetMemoryLimit(llGetUsedMemory() + 2048);
         // Menu stuff
         init();
+        if (~(""!="x")){
+            integer mem = llGetUsedMemory();
+            llSleep(0.1); // let GC do its thing
+            if (mem > 17000)
+            {
+                llOwnerSay(llGetScriptName() + " is compiled as Mono but uses more than 16K or memory! You can compile it as LSL and save bytes.");
+            }
+            llSetMemoryLimit(llGetUsedMemory() + 1000);
+        }
     }
     touch_start(integer num_detected)
     {
