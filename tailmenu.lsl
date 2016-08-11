@@ -3,11 +3,13 @@
 
 // The latest version of this script can always be found at
 // https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
-string ver = "3.7.26";
+
+string ver              =   "3.7.28";
+
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
-string objectType = "tail";           // Is it a tail, a nose, a head, etc.?
-integer  bHasDick = 0;                // set default gender here.
+string objectType       =   "tail";           // Is it a tail, a nose, a head, etc.?
+integer  bHasDick       =   0;                // set default gender here.
 // 0 for FEMALE
 // 1 for MALE
 integer bLinkForNames = 0;           // Display names in emotes using icon-less SLURL
@@ -24,7 +26,9 @@ float time;
 integer MessagesLevel = 1;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
 integer listen_timeout = 60;
 integer iShowMemStats = 0;             // Show Memory statistics
-list lEmoteTypeMenu = ["Soft Emotes","Adult Emotes"];
+list lEmoteTypeMenu =   ["Soft Emotes"
+                        ,"Adult Emotes"
+                        ];
 list list_soft = ["Nom On","Chew On","Bite","Pet","Tug","Grab","Fluff","Play","Hug","Hold"];
 list list_adult = ["Grope","Hump","Lick Butt","Lick Genitals","Smack Butt"];
 //// Other variables ////
