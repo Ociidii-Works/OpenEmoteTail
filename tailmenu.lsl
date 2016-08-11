@@ -276,7 +276,6 @@ default
     }
     state_entry()
     {
-        llSetMemoryLimit(llGetUsedMemory() + 2048);
         // Menu stuff
         init();
         if (~(""!="x")){
