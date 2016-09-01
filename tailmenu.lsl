@@ -1,10 +1,23 @@
-// Open Emote Tail
-// Author: Xenhat Liamano
+//////////////////////////////////////////////////////////////////////////////////
+//  OPEN EMOTE TAIL INTERACTIVE SCRIPT                                          //
+//  Copyright (c) 2016 Xenhat Liamano                                           //
+//  THIS MATERIAL IS PROVIDED AS IS, WITH ABSOLUTELY NO WARRANTY EXPRESSED      //
+//  OR IMPLIED.  ANY USE IS AT YOUR OWN RISK.                                   //
+//                                                                              //
+//  Permission is hereby granted to use or copy this program                    //
+//  for any purpose,  provided the above notices are retained on all copies.    //
+//  Permission to modify the code and to distribute modified code is granted,   //
+//  provided the above notices are retained, and a notice that the code was     //
+//  modified is included with the above copyright notice.                       //
+//////////////////////////////////////////////////////////////////////////////////
 
 // The latest version of this script can always be found at
-// https://raw.github.com/Ociidii-Works/OpenEmoteTail/master/tailmenu.lsl
+// https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
+// A version checker is included.
 
-string ver              =   "3.7.28";
+string g_current_version              =   "3.7.28";
+string repository = "XenHat/OpenEmoteTail";
+key http_request_id;
 
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
@@ -15,7 +28,6 @@ integer  bHasDick       =   0;                // set default gender here.
 integer bLinkForNames = 0;           // Display names in emotes using icon-less SLURL
 integer bLinkForOwner = 1;           // Display owner name in emotes using icon-less SLURL
 integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
-
 
 /////////////////////////////////////////////////////////////////////////
 /// Internal shit, don't touch unless you know what you're doing! //////
@@ -127,7 +139,7 @@ init()
     kOwnerKey = llGetOwner();
     //Message stuff
     string et = "init";
-    dm(4,et,"Running OET v" + ver + "...");
+    dm(4,et,"Running OET v" + g_current_version + "...");
     sObjectName = llGetObjectName();
     sOwnerName = llGetDisplayName(kOwnerKey);
     // simplistic gender auto-detection.
@@ -159,7 +171,7 @@ init()
 
 xlGenerateDialogText(string sHelpText, list lButtons)
 {
-    sHelpText = "Based on [https://github.com/Ociidii-Works/OpenEmoteTail OpenEmoteTail] by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
+    sHelpText = "Based on [https://github.com/XenHat/OpenEmoteTail OpenEmoteTail] " + g_current_version + " by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
     llDialog(kToucherKey,sHelpText,lButtons,iChannel);
 }
 integer bMenuType;
@@ -246,6 +258,13 @@ fClearListeners()
     //llInstantMessage(kToucherKey,"Timed out. Click the tail again to get a menu");
     dm(3,et,"Listener closed");
 }
+getLatestUpdate()
+{
+    if(MessagesLevel>=4) llOwnerSay("Looking for update...");
+    // http_request_id = llHTTPRequest("https://api.github.com/repos/"+repository+"/releases/latest",[], "");
+    http_request_id = llHTTPRequest("https://share.xenhat.me/DJ1OGTP2wl.txt",[], "");
+    // http_request_id = llHTTPRequest("https://api.github.com/repos/XenHat/OpenEmoteTail/compare/3.7.26...3.7.28",[], "");
+}
 default
 {
     changed(integer iChange)
@@ -277,6 +296,7 @@ default
         kToucherKey = kOwnerKey;
         xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
         // twitch("2");
+        getLatestUpdate();
     }
     state_entry()
     {
@@ -287,10 +307,25 @@ default
             llSleep(0.1); // let GC do its thing
             if (mem > 17000)
             {
-                llOwnerSay(llGetScriptName() + " is compiled as Mono but uses more than 16K or memory! You can compile it as LSL and save bytes.");
+                llOwnerSay(llGetScriptName() + " is compiled as Mono but uses more than 16K of memory! You can compile it as LSL and save bytes.");
             }
             llSetMemoryLimit(llGetUsedMemory() + 1000);
         }
+        if (llGetScriptName() == "New Script")
+        {
+            string oname = llGetObjectName();
+            llSetObjectName("");
+            llOwnerSay("/me secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect stares at you from far away... \"'New Script', really?\"");
+            llSetObjectName(oname);
+        }
+        if (llGetObjectName() == "Object")
+        {
+            string oname = llGetObjectName();
+            llSetObjectName("");
+            llOwnerSay("/me secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect stares at you from far away... \"'OH COME ON! Name that poor prim!\"");
+            llSetObjectName(oname);
+        }
+        getLatestUpdate();
     }
     touch_start(integer num_detected)
     {
@@ -525,6 +560,37 @@ default
             dm(2,et,"Something unexpected happened");
             //dm(4,et,"Message Received: " + m);
         }
+    }
+    http_response(key request_id, integer status, list metadata, string body)
+    {
+        if (request_id != http_request_id) return;// exit if unknown
+        string new_version_s = llJsonGetValue(body,["tag_name"]);
+        if (new_version_s == g_current_version) return;
+        list cur_version_l = llParseString2List(g_current_version, ["."], [""]);
+        list new_version_l = llParseString2List(new_version_s, ["."], [""]);
+        string update_type = "version";
+        if (llList2Integer(new_version_l, 0) > llList2Integer(cur_version_l, 0)){
+            update_type = "major version"; jump update;
+        }
+        else if (llList2Integer(new_version_l, 1) > llList2Integer(cur_version_l, 1)){
+            update_type = "minor version"; jump update;
+        }
+        else if (llList2Integer(cur_version_l, 2) < llList2Integer(new_version_l, 2)){
+            update_type = "patch"; jump update;
+        }
+        jump end;
+        @update;
+        llOwnerSay("\n"
+            +"A new " + update_type + " is available: OpenEmoteTail [https://github.com/"
+                +repository+"/tree/"+new_version_s+"/ v"+new_version_s+
+                "]\n(You are currently running v"+g_current_version+")\n\n"
+
+            +"You can view the changelog ["+"https://github.com/"+repository+"/compare/"
+                +g_current_version+"..."+new_version_s+" over at GitHub].\n\n"
+
+            +"Raw scripts to copy-paste: [https://raw.githubusercontent.com/"+repository
+                +"/"+new_version_s+"/tailmenu.lsl OpenEmoteTail.lsl]");
+        @end;
     }
     timer()
     {
