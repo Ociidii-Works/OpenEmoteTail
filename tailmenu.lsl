@@ -260,6 +260,7 @@ fClearListeners()
 }
 getLatestUpdate()
 {
+    llSetMemoryLimit(0);
     if(MessagesLevel>=4) llOwnerSay("Looking for update...");
     http_request_id = llHTTPRequest("https://api.github.com/repos/"+repository+"/releases/latest",[], "");
     // http_request_id = llHTTPRequest("https://share.xenhat.me/DJ1OGTP2wl.txt",[], "");
@@ -302,15 +303,11 @@ default
     {
         // Menu stuff
         init();
-        if (~(""!="x")){
-            integer mem = llGetUsedMemory();
+        if (!~(""!="x")){
             llSleep(0.1); // let GC do its thing
-            if (mem > 17000)
-            {
-                llOwnerSay(llGetScriptName() + " is compiled as Mono but uses more than 16K of memory! You can compile it as LSL and save bytes.");
-            }
-            llSetMemoryLimit(llGetUsedMemory() + 1000);
+            llOwnerSay(llGetScriptName() + " cannot breathe! Please recompile it as Mono!");
         }
+        llSetMemoryLimit(llGetUsedMemory() + 2000); // fat. I know.
         if (llGetScriptName() == "New Script")
         {
             string oname = llGetObjectName();
@@ -591,6 +588,7 @@ default
             +"Raw scripts to copy-paste: [https://raw.githubusercontent.com/"+repository
                 +"/"+new_version_s+"/tailmenu.lsl OpenEmoteTail.lsl]");
         @end;
+        llSetMemoryLimit(llGetUsedMemory() + 2000);
     }
     timer()
     {
