@@ -15,7 +15,7 @@
 // https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
 // A version checker is included.
 
-string g_current_version              =   "3.7.31";
+string g_current_version              =   "3.7.32";
 string repository = "XenHat/OpenEmoteTail";
 key http_request_id;
 
@@ -307,7 +307,7 @@ default
             llSleep(0.1); // let GC do its thing
             llOwnerSay(llGetScriptName() + " cannot breathe! Please recompile it as Mono!");
         }
-        llSetMemoryLimit(llGetUsedMemory() + 2000); // fat. I know.
+        llSetMemoryLimit(llGetUsedMemory() + 3000); // fat. I know.
         if (llGetScriptName() == "New Script")
         {
             string oname = llGetObjectName();
@@ -580,7 +580,7 @@ default
         llOwnerSay("\n"
             +"A new " + update_type + " is available: OpenEmoteTail [https://github.com/"
                 +repository+"/tree/"+new_version_s+"/ v"+new_version_s+
-                "]\n(You are currently running v"+g_current_version+")\n\n"
+                "] \""+llJsonGetValue(body,["name"])+"\"\n(You are currently running v"+g_current_version+")\n\n"
 
             +"You can view the changelog ["+"https://github.com/"+repository+"/compare/"
                 +g_current_version+"..."+new_version_s+" over at GitHub].\n\n"
@@ -588,7 +588,7 @@ default
             +"Raw scripts to copy-paste: [https://raw.githubusercontent.com/"+repository
                 +"/"+new_version_s+"/tailmenu.lsl OpenEmoteTail.lsl]");
         @end;
-        llSetMemoryLimit(llGetUsedMemory() + 2000);
+        llSetMemoryLimit(llGetUsedMemory() + 3000);
     }
     timer()
     {
