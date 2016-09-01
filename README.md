@@ -7,3 +7,4 @@ This is a little script I have been working on for a while now.
 * Optional twitch motion provided by an additional script
 * Respects proper grammar (No NameEndingWithS's)
 * "Soft"/PG and "Adult" menus
+* Update checker
