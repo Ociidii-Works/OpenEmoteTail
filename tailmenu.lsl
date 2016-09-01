@@ -15,7 +15,7 @@
 // https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
 // A version checker is included.
 
-string g_current_version              =   "3.7.30";
+string g_current_version              =   "3.7.31";
 string repository = "XenHat/OpenEmoteTail";
 key http_request_id;
 
@@ -284,6 +284,7 @@ default
         if(kID != NULL_KEY)
         llRequestPermissions(kOwnerKey, PERMISSION_TAKE_CONTROLS );
         if(MessagesLevel>2) memstats("attach");
+        getLatestUpdate();
     }
     on_rez(integer start_param)
     {
@@ -297,7 +298,6 @@ default
         kToucherKey = kOwnerKey;
         xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
         // twitch("2");
-        getLatestUpdate();
     }
     state_entry()
     {
