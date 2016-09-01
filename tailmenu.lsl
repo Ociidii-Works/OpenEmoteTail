@@ -15,7 +15,7 @@
 // https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
 // A version checker is included.
 
-string g_current_version              =   "3.7.28";
+string g_current_version              =   "3.7.29";
 string repository = "XenHat/OpenEmoteTail";
 key http_request_id;
 
