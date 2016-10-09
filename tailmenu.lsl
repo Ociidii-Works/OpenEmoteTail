@@ -437,13 +437,11 @@ default
         {
             if(m == "Tacos")
             {
-                llListenRemove(iListenHandle);
                 fSetGender(0);
                 dm(3,et,"gender set to female");
             }
             else if(m == "Sausage")
             {
-                llListenRemove(iListenHandle);
                 fSetGender(1);
                 dm(3,et,"gender set to male");
             }
@@ -514,32 +512,26 @@ default
                 if(m == "Lick Genitals")
                 {
                     if( bHasDick == 1){
-                        llListenRemove(iListenHandle);
                         llSay(0,"/me " + n + " bends down in front of " + sOwnerNameInEmote + ", slowly moving their hands to reach " + sOwnerNameInEmote + sOwnerPossessive + " butt, squeezing it softly with one hand as they grab his cock, slowly licking it up and down while looking at him...");
                     }
                     else{
-                        llListenRemove(iListenHandle);
                         llSay(0,"/me " + n + " bends down in front of " + sOwnerNameInEmote + ", slowly kissing her lap and then put their mouth on her pussy, licking slowly...");
                     }
                 }
                 else if(m == "Lick Butt")
                 {
-                    llListenRemove(iListenHandle);
                     llSay(0,"/me " + n + " bends down and licks " + sOwnerNameInEmote + sOwnerPossessive + " butt! ♥");
                 }
                 else if(m == "Smack Butt")
                 {
-                    llListenRemove(iListenHandle);
                     llSay(0,"/me " + n + " smacks " + sOwnerNameInEmote + sOwnerPossessive + " butt!");
                 }
                 else if(m == "Grope")
                 {
-                    llListenRemove(iListenHandle);
                     llSay(0,"/me " + n + " gropes " + sOwnerNameInEmote + "! ^_~");
                 }
                 else if(m == "Hump")
                 {
-                    llListenRemove(iListenHandle);
                     llSay(0,"/me " + n + " grabs " + sOwnerNameInEmote + " from behind and starts humpin!");
                 }
                 llSetObjectName(sObjectName);
