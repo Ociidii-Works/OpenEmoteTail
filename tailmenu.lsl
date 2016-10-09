@@ -33,9 +33,9 @@ integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
-float touchDelay = 1.0;
-float time;
 integer MessagesLevel = 1;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
+integer touchDelay = 2;
+integer time;
 integer listen_timeout = 60;
 integer iShowMemStats = 0;             // Show Memory statistics
 list lEmoteTypeMenu =   ["Soft Emotes"
