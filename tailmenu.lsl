@@ -326,7 +326,7 @@ default
     }
     touch_start(integer num_detected)
     {
-        time = llGetTime();
+        time = llGetUnixTime();
     }
     touch_end(integer total_number)
     {
@@ -345,7 +345,7 @@ default
         dm(4,"touch_end","Checking user and generating new menus");
         if(kToucherKey == kOwnerKey)
         {
-            if (llGetTime() >= (time + touchDelay))
+            if (llGetUnixTime() >= (time + touchDelay))
             {
                 fBuildMenu(0);
             }
