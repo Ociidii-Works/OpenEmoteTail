@@ -124,7 +124,7 @@ dm(integer type, string e, string m)
 }
 twitch(string times)
 {
-    if(useTwitcher == 1)
+    if(useTwitcher)
     {
         llMessageLinked(LINK_THIS, 0, "t " + times, "");
     }
@@ -245,7 +245,7 @@ fBuildMenu(integer bInternalMenuSelect)
     {
         dm(4,et,"Something unexpected happened D:");
     }
-    // twitch("1");
+    twitch("1");
     if(MessagesLevel>2) memstats(et);
 }
 fClearListeners()
@@ -280,7 +280,7 @@ default
     {
         if(kOwnerKey != llGetOwner()) llResetScript();
         init();
-        // twitch("3");
+        twitch("3");
         if(kID != NULL_KEY)
         llRequestPermissions(kOwnerKey, PERMISSION_TAKE_CONTROLS );
         if(MessagesLevel>2) memstats("attach");
@@ -297,14 +297,14 @@ default
         llSleep(2);
         kToucherKey = kOwnerKey;
         xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
-        // twitch("2");
+        twitch("2");
     }
     state_entry()
     {
         // Menu stuff
         init();
+        llSleep(0.1); // let GC do its thing
         if (!~(""!="x")){
-            llSleep(0.1); // let GC do its thing
             llOwnerSay(llGetScriptName() + " cannot breathe! Please recompile it as Mono!");
         }
         llSetMemoryLimit(llGetUsedMemory() + 3000); // fat. I know.
@@ -347,13 +347,11 @@ default
         {
             if (llGetTime() >= (time + touchDelay))
             {
-                //llOwnerSay("Level 3");
                 fBuildMenu(0);
             }
         }
         if (kToucherKey != kOwnerKey)
         {
-            //llOwnerSay("Level 4");
             fBuildMenu(0);
             sToucherName = llGetDisplayName(kToucherKey);
             llOwnerSay(sToucherName + " is touching your " + objectType + "...");
@@ -379,7 +377,6 @@ default
         if(!c) return; // Don't listen on channel 0
         string et = "listen";
         dm(4,et,"Channel received: " + (string)c);
-        //string m = llToLower(m);
         dm(4,et,n + " selected " + m);
         if (bLinkForNames)
         {
@@ -433,7 +430,7 @@ default
                 llSetObjectName(" ");
                 llSay(0,"/me " + n + " waggles " + sGenderHis + " " + objectType + " happily!");
                 llSetObjectName(sObjectName);
-                // twitch("7");
+                twitch("7");
             }
         }
         else if (bMenuType == 3)
@@ -524,7 +521,6 @@ default
                         llListenRemove(iListenHandle);
                         llSay(0,"/me " + n + " bends down in front of " + sOwnerNameInEmote + ", slowly kissing her lap and then put their mouth on her pussy, licking slowly...");
                     }
-                    // bMenuType = 0;
                 }
                 else if(m == "Lick Butt")
                 {
