@@ -111,20 +111,20 @@ dm(integer type, string e, string m)
             the actual message
     */
     if(type == 5)
-    llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
+    llOwnerSay("D:" + e + " " + m);
 
     m = " " + llStringTrim(m,0x3);
     if(type == 1 && MessagesLevel >= 1)
-    llRegionSayTo(kOwnerKey,0, "E:" + e + " " + m);
+    llOwnerSay("E:" + e + " " + m);
 
     if(type == 2 && MessagesLevel >= 2)
-    llRegionSayTo(kOwnerKey,0, "W:" + e + " " + m);
+    llOwnerSay("W:" + e + " " + m);
 
     if(type == 3 && MessagesLevel >= 3)
-    llRegionSayTo(kOwnerKey,0, "I:" + e + " " + m);
+    llOwnerSay("I:" + e + " " + m);
 
     if(type == 4 && MessagesLevel >= 4)
-    llRegionSayTo(kOwnerKey,0, "D:" + e + " " + m);
+    llOwnerSay("D:" + e + " " + m);
 }
 twitch(string times)
 {
