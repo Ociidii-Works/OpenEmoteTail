@@ -188,7 +188,6 @@ fBuildMenu(integer bInternalMenuSelect)
     if(MessagesLevel>2) memstats(et);
     dm(4,et,"Received Menu Type: " + (string)bInternalMenuSelect);
     dm(4,et,"Received Key: " + (string)kToucherKey);
-    iChannel = 0x80000000 | (integer)("0x" + (string)kToucherKey);
     iChannel = 0x80000000 | ((integer)("0x"+(string)kToucherKey) ^ APP_ID);
     dm(4,et,"Channel = " + (string)iChannel);
     iListenHandle = llListen(iChannel, "", kToucherKey, "");
