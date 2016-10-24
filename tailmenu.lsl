@@ -16,7 +16,7 @@
 // A version checker is included.
 
 string g_current_version              =   "3.7.38";
-integer touchDelay = 2; // How long to wait before displaying owner menu
+integer touchDelay = 1; // How long to wait before displaying owner menu
 // Save settings to prim desc. Disable to avoid breaking objects that also use this storage method. you will however lose your settings if the script is reset.
 integer g_saveToDesc_b                = FALSE;
 // Todo: Use StringReplace instead of variables for Him/Her/His
