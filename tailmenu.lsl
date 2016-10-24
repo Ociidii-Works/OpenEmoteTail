@@ -209,7 +209,7 @@ fBuildMenu(integer bInternalMenuSelect)
                 dm(4,et,"Is Locked");
                 lockbuttonText = "Unlock";
             }
-            xlGenerateDialogText("\nChange " + objectType + " option",["Waggle",lockbuttonText,"Gender"]);
+            xlGenerateDialogText("\nChange " + objectType + " option",["Waggle",lockbuttonText,"Gender","Check Update"]);
         }
         else if(bInternalMenuSelect == 3) // Gender Menu
         {
@@ -436,6 +436,11 @@ default
                 llSay(0,"/me " + n + " waggles " + sGenderHis + " " + objectType + " happily!");
                 llSetObjectName(sObjectName);
                 twitch("7");
+            }
+            else if(m == "Check Update")
+            {
+                llListenRemove(iListenHandle);
+                getLatestUpdate();
             }
         }
         else if (bMenuType == 3)
