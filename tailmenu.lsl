@@ -184,6 +184,7 @@ xlGenerateDialogText(string sHelpText, list lButtons)
 integer bMenuType;
 fBuildMenu(integer bInternalMenuSelect)
 {
+    bMenuType = bInternalMenuSelect;
     string et = "fBuildMenu";
     if(MessagesLevel>2) memstats(et);
     dm(4,et,"Received Menu Type: " + (string)bInternalMenuSelect);
