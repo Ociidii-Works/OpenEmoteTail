@@ -268,8 +268,6 @@ getLatestUpdate()
     llSetMemoryLimit(0);
     if(MessagesLevel>=4) llOwnerSay("Looking for update...");
     http_request_id = llHTTPRequest("https://api.github.com/repos/"+repository+"/releases/latest",[], "");
-    // http_request_id = llHTTPRequest("https://share.xenhat.me/DJ1OGTP2wl.txt",[], "");
-    // http_request_id = llHTTPRequest("https://api.github.com/repos/XenHat/OpenEmoteTail/compare/3.7.26...3.7.28",[], "");
 }
 default
 {
