@@ -15,10 +15,8 @@
 // https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
 // A version checker is included.
 
-string repository = "XenHat/OpenEmoteTail";
-key http_request_id;
-
 string g_current_version              =   "3.7.34";
+integer touchDelay = 2; // How long to wait before displaying owner menu
 // Save settings to prim desc. Disable to avoid breaking objects that also use this storage method. you will however lose your settings if the script is reset.
 integer g_saveToDesc_b                = FALSE;
 // Todo: Use StringReplace instead of variables for Him/Her/His
@@ -35,8 +33,9 @@ integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
 /// Internal shit, don't touch unless you know what you're doing! //////
 ///////////////////////////////////////////////////////////////////////
 /// Variables //////
+key http_request_id;
+string repository = "XenHat/OpenEmoteTail";
 integer MessagesLevel = 1;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
-integer touchDelay = 2;
 integer time;
 integer listen_timeout = 60;
 integer iShowMemStats = 0;             // Show Memory statistics
