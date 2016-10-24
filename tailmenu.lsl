@@ -64,6 +64,7 @@ string sGenderHim;
 string sGenderHis;
 string sGenderHeCap;
 integer APP_ID = 83; // kittyface
+integer gMemoryLimit_i = 3000;
 //// Functions ////
 fSetGender(integer iNewGender)
 {
@@ -331,7 +332,7 @@ default
         if (!~(""!="x")){
             llOwnerSay(llGetScriptName() + " cannot breathe! Please recompile it as Mono!");
         }
-        llSetMemoryLimit(llGetUsedMemory() + 3000); // fat. I know.
+        llSetMemoryLimit(llGetUsedMemory()+gMemoryLimit_i); // fat. I know.
         if (llGetScriptName() == "New Script")
         {
             string oname = llGetObjectName();
@@ -616,7 +617,7 @@ default
                 +"/"+new_version_s+"/tailmenu.lsl OpenEmoteTail.lsl]";
         llOwnerSay(message_out);
         @end;
-        llSetMemoryLimit(llGetUsedMemory() + 3000);
+        llSetMemoryLimit(llGetUsedMemory()+gMemoryLimit_i);
     }
     timer()
     {
