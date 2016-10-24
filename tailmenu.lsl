@@ -602,7 +602,6 @@ default
                 +"] \""+llJsonGetValue(body,["name"])+"\"";
             string desc = llJsonGetValue(body,["body"]);
             list desc_lines = xlSplitString(desc,30);
-            llOwnerSay("desc_lines = '" + llList2CSV(desc_lines)+"'");
             string filled_desc;
             integer nyadex = 0;
             for(;nyadex < llGetListLength(desc_lines);nyadex++)
