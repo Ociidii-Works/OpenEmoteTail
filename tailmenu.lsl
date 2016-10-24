@@ -35,7 +35,7 @@ integer useTwitcher = 0; // Use the twitcher (requires Twitcher script)
 /// Variables //////
 key http_request_id;
 string repository = "XenHat/OpenEmoteTail";
-integer MessagesLevel = 1;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
+integer MessagesLevel = 2;          // 0: none, 1: error , 2: warning, 3: info, 4: debug
 integer time;
 integer listen_timeout = 60;
 integer iShowMemStats = 0;             // Show Memory statistics
@@ -90,12 +90,13 @@ saveToDesc()
 }
 memstats(string type)
 {
-    if(iShowMemStats)
+    if(!iShowMemStats)
     {
-        dm(5,type,(string)llGetMemoryLimit() + " kb allocated");
-        dm(5,type,(string)llGetUsedMemory() + " kb used");
-        dm(5,type,(string)llGetFreeMemory() + " kb free");
+        return;
     }
+    dm(4,type,(string)llGetMemoryLimit() + " kb allocated");
+    dm(4,type,(string)llGetUsedMemory() + " kb used");
+    dm(4,type,(string)llGetFreeMemory() + " kb free");
 }
 dm(integer type, string e, string m)
 {
@@ -175,25 +176,35 @@ init()
 2: Adult
 3: Gender Menu
 */
+integer OWNER_MENU = 0;
+integer GENDER_MENU = 1;
+integer OTHERS_MENU = 2;
+integer SOFT_MENU = 3;
+integer ADULT_MENU = 4;
 
 xlGenerateDialogText(string sHelpText, list lButtons)
 {
     sHelpText = "Based on [https://github.com/XenHat/OpenEmoteTail OpenEmoteTail] " + g_current_version + " by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
+    llSetTimerEvent(0.0);
+    llSetTimerEvent(listen_timeout);
     llDialog(kToucherKey,sHelpText,lButtons,iChannel);
 }
 integer bMenuType;
-fBuildMenu(integer bInternalMenuSelect)
+fBuildMenu(integer newMenuType_i)
 {
-    bMenuType = bInternalMenuSelect;
+    bMenuType = newMenuType_i;
     string et = "fBuildMenu";
     if(MessagesLevel>2) memstats(et);
-    dm(4,et,"Received Menu Type: " + (string)bInternalMenuSelect);
+    dm(4,et,"Received Menu Type: " + (string)bMenuType);
     dm(4,et,"Received Key: " + (string)kToucherKey);
     iChannel = 0x80000000 | ((integer)("0x"+(string)kToucherKey) ^ APP_ID);
     dm(4,et,"Channel = " + (string)iChannel);
+    fClearListeners();
     iListenHandle = llListen(iChannel, "", kToucherKey, "");
+    dm(4,et,"Now listening on = " + (string)iChannel + " for secondlife:///app/agent/"+(string)kToucherKey+"/displayname");
+
     
-    if(bInternalMenuSelect == 0)
+    if(bMenuType == OWNER_MENU)
     {
         //// Owner Menu ////
         if (kToucherKey != NULL_KEY && kToucherKey != kOwnerKey)
@@ -217,7 +228,7 @@ fBuildMenu(integer bInternalMenuSelect)
             xlGenerateDialogText("\nChange " + objectType + " option",["Waggle",lockbuttonText,"Gender","Check Update"]);
         }
     }
-    else if(bInternalMenuSelect == 3) // Gender Menu
+    else if(bMenuType == GENDER_MENU) // Gender Menu
     {
         dm(3,et,"Entering Gender Menu");
         xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
@@ -233,23 +244,20 @@ fBuildMenu(integer bInternalMenuSelect)
         else // if not locked and not owner
         {
             dm(4,et,"Entering Others Menu");
-            if(bInternalMenuSelect == 0) // Root Menu
+            if(bMenuType == OTHERS_MENU)
             {
                 dm(4,et,"Building Choice Menu");
                 xlGenerateDialogText("Chose an Emote type",lEmoteTypeMenu);
-                llSetTimerEvent(listen_timeout);
             }
-            else if(bInternalMenuSelect == 1) // Soft Menu
+            else if(bMenuType == SOFT_MENU)
             {
                 dm(4,et,"Building Soft Menu");
                 xlGenerateDialogText("Okay, what do you want to do?",list_soft);
-                llSetTimerEvent(listen_timeout);
             }
-            else if(bInternalMenuSelect == 2) // Adult Menu
+            else if(bMenuType == ADULT_MENU)
             {
                 dm(4,et,"Building Adult Menu");
                 xlGenerateDialogText("Feeling naughty, eh? How much?",list_adult);
-                llSetTimerEvent(listen_timeout);
             }
         }
     }
@@ -323,11 +331,15 @@ default
             return;
         }
         kToucherKey = llGetOwner();
-        fBuildMenu(3);
+        fBuildMenu(GENDER_MENU);
         twitch("2");
     }
     state_entry()
     {
+        if(MessagesLevel>=4)
+        {
+            gMemoryLimit_i = 64000;
+        }
         // Menu stuff
         init();
         llSleep(0.1); // let GC do its thing
@@ -358,6 +370,7 @@ default
     touch_end(integer total_number)
     {
         kToucherKey = llDetectedKey(0);
+        string et = "touch_end";
         dm(4,"touch_end",(string)kToucherKey);
         //llOwnerSay("Level 1");
         if ((bMenuInUse) /* is the tail already in use? */
@@ -366,20 +379,22 @@ default
         {
             //llOwnerSay("Level 2");
             kLastToucher = kToucherKey; // Store the new key
-            dm(4,"touch_end","Clearing listener because toucher changed");
+            dm(4,et,"Clearing listener because toucher changed");
             fClearListeners();
         }
-        dm(4,"touch_end","Checking user and generating new menus");
+        dm(4,et,"Checking user and generating new menus");
         if(kToucherKey == kOwnerKey)
         {
+            dm(4,et,"Toucher is owner");
             if (llGetUnixTime() >= (time + touchDelay))
             {
-                fBuildMenu(0);
+                fBuildMenu(OWNER_MENU);
             }
         }
         if (kToucherKey != kOwnerKey)
         {
-            fBuildMenu(0);
+            dm(4,et,"Toucher is other");
+            fBuildMenu(OTHERS_MENU);
             sToucherName = llGetDisplayName(kToucherKey);
             llOwnerSay(sToucherName + " is touching your " + objectType + "...");
             string nameEnd = llGetSubString(sToucherName, -1, -1);
@@ -391,12 +406,8 @@ default
             {
                 sToucherPossessive = "'s";
             }
-            llSetTimerEvent(listen_timeout);
         }
-        else
-        {
-         llSetTimerEvent(listen_timeout);
-        }
+        llSetTimerEvent(listen_timeout);
         time = 0;
     }
     listen(integer c, string n, key kToucherKey, string m)
@@ -415,24 +426,21 @@ default
             n = llGetDisplayName(kToucherKey);
         }
         // tail commands
-        if(bMenuType == 0)
+        // if(bMenuType == OTHERS_MENU)
         {
             if(m == "Soft Emotes")
             {
                 llListenRemove(iListenHandle);
-                bMenuType = 1;
-                fBuildMenu(bMenuType);
+                fBuildMenu(SOFT_MENU);
             }
             else if(m == "Adult Emotes")
             {
                 llListenRemove(iListenHandle);
-                bMenuType = 2;
-                fBuildMenu(bMenuType);
+                fBuildMenu(ADULT_MENU);
             }
             else if(m == "Gender") // 2
             {
-                bMenuType = 3;
-                fBuildMenu(bMenuType);
+                fBuildMenu(GENDER_MENU);
             }
             else if(m == "Emote")
             {
@@ -466,7 +474,7 @@ default
                 getLatestUpdate();
             }
         }
-        else if (bMenuType == 3)
+        if (bMenuType == GENDER_MENU)
         {
             dm(4,et,"Processing Gender Response");
             if(m == "Tacos")
@@ -479,11 +487,10 @@ default
                 fSetGender(1);
                 dm(3,et,"gender set to male");
             }
-            bMenuType = 0;
             fClearListeners();
         }
         //// Soft Emotes ////
-        else if(bMenuType >0)
+        // else if(bMenuType == SOFT_MENU)
         {
             llSetObjectName(" ");
             string sOwnerNameInEmote;
@@ -495,7 +502,7 @@ default
             {
                 sOwnerNameInEmote = sOwnerName;
             }
-            if(bMenuType == 1)
+            if(bMenuType == SOFT_MENU)
             {
                 if(m == "Nom On")
                 {
@@ -540,7 +547,7 @@ default
                 llSetObjectName(sObjectName);
             }
             /// Adult Emotes ////
-            else if(bMenuType == 2) // 1
+            else if(bMenuType == ADULT_MENU) // 1
             {
                 llSetObjectName(" ");
                 if(m == "Lick Genitals")
@@ -570,15 +577,14 @@ default
                 }
                 llSetObjectName(sObjectName);
             }
-            bMenuType = 0;
-            fClearListeners();
+            // fClearListeners();
         }
         //// Owner Menu ////
-        else
-        {
-            dm(2,et,"Something unexpected happened");
+        // else
+        // {
+            // dm(2,et,"Something unexpected happened");
             //dm(4,et,"Message Received: " + m);
-        }
+        // }
     }
     http_response(key request_id, integer status, list metadata, string body)
     {
