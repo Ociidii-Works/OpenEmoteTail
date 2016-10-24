@@ -15,7 +15,7 @@
 // https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
 // A version checker is included.
 
-string g_current_version              =   "3.7.35";
+string g_current_version              =   "3.7.36";
 integer touchDelay = 2; // How long to wait before displaying owner menu
 // Save settings to prim desc. Disable to avoid breaking objects that also use this storage method. you will however lose your settings if the script is reset.
 integer g_saveToDesc_b                = FALSE;
@@ -63,6 +63,7 @@ string sToucherPossessive;
 string sGenderHim;
 string sGenderHis;
 string sGenderHeCap;
+integer APP_ID = 83; // kittyface
 //// Functions ////
 fSetGender(integer iNewGender)
 {
@@ -187,6 +188,7 @@ fBuildMenu(integer bInternalMenuSelect)
     dm(4,et,"Received Menu Type: " + (string)bInternalMenuSelect);
     dm(4,et,"Received Key: " + (string)kToucherKey);
     iChannel = 0x80000000 | (integer)("0x" + (string)kToucherKey);
+    iChannel = 0x80000000 | ((integer)("0x"+(string)kToucherKey) ^ APP_ID);
     dm(4,et,"Channel = " + (string)iChannel);
     iListenHandle = llListen(iChannel, "", kToucherKey, "");
     //// Owner Menu ////
