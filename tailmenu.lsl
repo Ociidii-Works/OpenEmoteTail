@@ -402,6 +402,7 @@ default
         if(!c) return; // Don't listen on channel 0
         string et = "listen";
         dm(4,et,"Channel received: " + (string)c);
+        dm(4,et,"Listening for menu type = " + (string)bMenuType);
         dm(4,et,n + " selected " + m);
         if (bLinkForNames)
         {
@@ -465,6 +466,7 @@ default
         }
         else if (bMenuType == 3)
         {
+            dm(4,et,"Processing Gender Response");
             if(m == "Tacos")
             {
                 fSetGender(0);
