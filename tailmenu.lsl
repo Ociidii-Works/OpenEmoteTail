@@ -192,11 +192,15 @@ fBuildMenu(integer bInternalMenuSelect)
     iChannel = 0x80000000 | ((integer)("0x"+(string)kToucherKey) ^ APP_ID);
     dm(4,et,"Channel = " + (string)iChannel);
     iListenHandle = llListen(iChannel, "", kToucherKey, "");
-    //// Owner Menu ////
-    if(kToucherKey == kOwnerKey)
+    
+    if(bInternalMenuSelect == 0)
     {
+        //// Owner Menu ////
+        if (kToucherKey != NULL_KEY && kToucherKey != kOwnerKey)
+        {
+            return;
+        }
         dm(3,et,"Entering Owner Menu");
-        if(bInternalMenuSelect == 0)
         { // Owner Menu Root
             dm(3,et,"Checking Lock");
             string lockbuttonText;
@@ -212,11 +216,11 @@ fBuildMenu(integer bInternalMenuSelect)
             }
             xlGenerateDialogText("\nChange " + objectType + " option",["Waggle",lockbuttonText,"Gender","Check Update"]);
         }
-        else if(bInternalMenuSelect == 3) // Gender Menu
-        {
-            dm(3,et,"Entering Gender Menu");
-            xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
-        }
+    }
+    else if(bInternalMenuSelect == 3) // Gender Menu
+    {
+        dm(3,et,"Entering Gender Menu");
+        xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
     }
     //// Others Menu ////
     else if(kToucherKey != kOwnerKey)
