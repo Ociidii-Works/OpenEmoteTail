@@ -284,25 +284,6 @@ getLatestUpdate()
     if(MessagesLevel>=4) llOwnerSay("Looking for update...");
     http_request_id = llHTTPRequest("https://api.github.com/repos/"+repository+"/releases/latest?access_token=603ee815cda6fb45fcc16876effbda017f158bef",[], "");
 }
-list xlSplitString(string body, integer at)
-{
-    list output_list = [];
-        integer StringLen = llStringLength(body);
-        string current_segment;
-        integer i=0;
-        while(i < StringLen)
-        {
-            current_segment += llGetSubString(body, i,i);
-            if (llStringLength(current_segment) >= at)
-            {
-                output_list += [current_segment];
-                current_segment = "";
-            }
-            i++;
-        }
-     output_list += [current_segment];
-     return output_list;
-}
 default
 {
     changed(integer iChange)
@@ -610,16 +591,8 @@ default
             +"\n"
             +"\n[https://github.com/"
                 +repository+"/tree/"+new_version_s+"/ "+new_version_s
-                +"] \""+llJsonGetValue(body,["name"])+"\"";
-            string desc = llJsonGetValue(body,["body"]);
-            list desc_lines = xlSplitString(desc,30);
-            string filled_desc;
-            integer nyadex = 0;
-            for(;nyadex < llGetListLength(desc_lines);nyadex++)
-            {
-                filled_desc += llList2String(desc_lines,nyadex)+"\n";
-            }
-            message_out +="\n"+filled_desc
+                +"] \""+llJsonGetValue(body,["name"])+"\""
+            +"\n"+llJsonGetValue(body,["body"])
             +"\nYou can view the changelog ["+"https://github.com/"+repository+"/compare/"
                 +g_current_version+"..."+new_version_s+" on GitHub].\n\n"
 
