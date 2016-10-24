@@ -15,10 +15,12 @@
 // https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
 // A version checker is included.
 
-string g_current_version              =   "3.7.33";
 string repository = "XenHat/OpenEmoteTail";
 key http_request_id;
 
+string g_current_version              =   "3.7.34";
+// Save settings to prim desc. Disable to avoid breaking objects that also use this storage method. you will however lose your settings if the script is reset.
+integer g_saveToDesc_b                = FALSE;
 // Todo: Use StringReplace instead of variables for Him/Her/His
 //       Refactor Variables
 string objectType       =   "tail";           // Is it a tail, a nose, a head, etc.?
@@ -82,6 +84,7 @@ fSetGender(integer iNewGender)
 }
 saveToDesc()
 {
+    if (!g_saveToDesc_b) return;
     llSetObjectDesc("#OET:g=" + (string)bHasDick + ",t=" + objectType);
 }
 memstats(string type)
@@ -143,10 +146,13 @@ init()
     sObjectName = llGetObjectName();
     sOwnerName = llGetDisplayName(kOwnerKey);
     // simplistic gender auto-detection.
-    string desc = llGetObjectDesc();
-    if (desc == "")
+    if (g_saveToDesc_b)
     {
-        bHasDick = (integer)llList2Integer(llGetObjectDetails(kOwnerKey,[OBJECT_BODY_SHAPE_TYPE]),0);
+        string desc = llGetObjectDesc();
+        if (desc == "")
+        {
+            bHasDick = (integer)llList2Integer(llGetObjectDetails(kOwnerKey,[OBJECT_BODY_SHAPE_TYPE]),0);
+        }
     }
     string nameEnd = llGetSubString(sOwnerName, -1, -1);
     if (nameEnd == "s")
