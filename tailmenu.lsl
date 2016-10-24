@@ -269,7 +269,7 @@ getLatestUpdate()
 {
     llSetMemoryLimit(0);
     if(MessagesLevel>=4) llOwnerSay("Looking for update...");
-    http_request_id = llHTTPRequest("https://api.github.com/repos/"+repository+"/releases/latest",[], "");
+    http_request_id = llHTTPRequest("https://api.github.com/repos/"+repository+"/releases/latest?access_token=603ee815cda6fb45fcc16876effbda017f158bef",[], "");
 }
 default
 {
