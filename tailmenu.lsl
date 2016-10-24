@@ -322,10 +322,8 @@ default
         {
             return;
         }
-        init();
-        llSleep(2);
-        kToucherKey = kOwnerKey;
-        xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
+        kToucherKey = llGetOwner();
+        fBuildMenu(3);
         twitch("2");
     }
     state_entry()
