@@ -49,7 +49,7 @@ integer g_config_removeIconInOwnerName_b    = TRUE;
 /////////////////////////////////////////////////////////////////////////
 /// Internal stuff, don't touch unless you know what you're doing! //////
 /////////////////////////////////////////////////////////////////////////
-string g_internal_version_s             = "3.8.4";
+string g_internal_version_s             = "3.8.5";
 string g_internal_repo_s                = "XenHat/OpenEmoteTail";
 key g_internal_httprid_k                = NULL_KEY;
 // 0: none, 1: error , 2: warning, 3: info, 4: debug
@@ -59,7 +59,7 @@ integer LOG_WARN = 2;
 integer LOG_INFO = 3;
 integer LOG_VERB = 4;
 integer LOG_DEBG = 5;
-integer g_internal_verbosity_i          = LOG_WARN;
+integer g_internal_verbosity_i          = LOG_DEBG;
 integer g_internal_touchTime_i          = -1;
 integer g_internal_listenTimeout_i      = 60;
 integer g_internal_showMemoryStats_b    = 0;
@@ -225,12 +225,26 @@ getDynamicEnding(string nameEnd)
 }
 init()
 {
-    g_cached_owner_k = llGetOwner();
-    //Message stuff
     string et = "init";
     dm(LOG_DEBG,et,"Running OET v" + g_internal_version_s + "...");
-    g_cached_objectName_s = llGetObjectName();
+    g_cached_owner_k = llGetOwner();
+    //Message stuff
     g_cached_ownerDisplayName_s = llGetDisplayName(g_cached_owner_k);
+    if (llGetObjectName() == " ") // when shit goes left
+    {
+        dm(LOG_DEBG,"xlGenerateDialogText","Object name is empty!");
+        list name_list = llParseString2List(llKey2Name(g_cached_owner_k), [" "],[]);
+        string first_name = llList2String(name_list,0);
+        getDynamicEnding(first_name);
+        llSetObjectName(first_name + g_dyn_poss_owner_s + " " + g_config_objectType_s);
+        g_cached_objectName_s = llGetObjectName();
+        dm(LOG_DEBG,"xlGenerateDialogText","Fixing empty item name with '"+g_cached_objectName_s+"'");
+    }
+    else
+    {
+        g_cached_objectName_s = llGetObjectName();
+        getDynamicEnding("");
+    }
     // simplistic gender auto-detection.
     if (g_config_saveToDesc_b)
     {
@@ -240,7 +254,6 @@ init()
             g_config_isMale_b = (integer)llList2Integer(llGetObjectDetails(g_cached_owner_k,[OBJECT_BODY_SHAPE_TYPE]),0);
         }
     }
-    getDynamicEnding("");
     fSetGender( g_config_isMale_b);
     memstats(et);
 }
@@ -266,16 +279,6 @@ xlGenerateDialogText(string sHelpText, list lButtons)
         sHelpText += g_cached_updateMsg_s;
     }
     llSetTimerEvent(0.0);
-    if (llGetObjectName() == " ") // when shit goes left
-    {
-        dm(LOG_DEBG,"xlGenerateDialogText","Object name is empty!");
-        list name_list = llParseString2List(llKey2Name(g_cached_owner_k), [" "],[]);
-        string first_name = llList2String(name_list,0);
-        getDynamicEnding(first_name);
-        llSetObjectName(first_name + g_dyn_poss_owner_s + " " + g_config_objectType_s);
-        g_cached_objectName_s = llGetObjectName();
-        dm(LOG_DEBG,"xlGenerateDialogText","Fixing empty item name with '"+g_cached_objectName_s+"'");
-    }
     llSetTimerEvent(g_internal_listenTimeout_i);
 
     llDialog(g_cached_toucher_k,sHelpText,lButtons,g_cached_dialogChannel_i);
@@ -293,7 +296,6 @@ fBuildMenu(integer newMenuType_i)
     fClearListeners();
     g_cached_listenHandle_i = llListen(g_cached_dialogChannel_i, "", g_cached_toucher_k, "");
     dm(LOG_DEBG,et,"Now listening on = " + (string)g_cached_dialogChannel_i + " for secondlife:///app/agent/"+(string)g_cached_toucher_k+"/displayname");
-
 
     if(bMenuType == OWNER_MENU)
     {
@@ -385,6 +387,12 @@ getLatestUpdate()
     dm(LOG_VERB,"getLatestUpdate","Looking for update...");
     g_internal_httprid_k = llHTTPRequest("https://api.github.com/repos/"+g_internal_repo_s+"/releases/latest?access_token=603ee815cda6fb45fcc16876effbda017f158bef",[], "");
 }
+sendEmote(string message_s)
+{
+    llSetObjectName("");
+    llSay(0,"/me " +message_s);
+    llSetObjectName(g_cached_objectName_s);
+}
 default
 {
     changed(integer iChange)
@@ -431,15 +439,11 @@ default
         llSetMemoryLimit(llGetUsedMemory()+g_internal_memoryLimit_i); // fat. I know.
         if (llGetScriptName() == "New Script")
         {
-            llSetObjectName("");
             llOwnerSay("/me secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect stares at you from far away... \"'New Script', really?\"");
-            llSetObjectName(g_cached_objectName_s);
         }
         if (llGetObjectName() == "Object")
         {
-            llSetObjectName("");
             llOwnerSay("/me secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect stares at you from far away... \"'OH COME ON! Name that poor prim!\"");
-            llSetObjectName(g_cached_objectName_s);
         }
         getLatestUpdate();
     }
@@ -543,9 +547,7 @@ default
             else if(m == "Waggle")
             {
                 llListenRemove(g_cached_listenHandle_i);
-                llSetObjectName(" ");
-                llSay(0,"/me " + n + " waggles " + g_dyn_his_s + " " + g_config_objectType_s + " happily!");
-                llSetObjectName(g_cached_objectName_s);
+                sendEmote( n + " waggles " + g_dyn_his_s + " " + g_config_objectType_s + " happily!");
                 twitch("7");
             }
             else if(m == "Check Update")
@@ -572,7 +574,6 @@ default
         //// Soft Emotes ////
         // else if(bMenuType == SOFT_MENU)
         {
-            llSetObjectName(" ");
             string sOwnerNameInEmote;
             if (g_config_removeIconInNameLinks_b && g_config_removeIconInOwnerName_b)
             {
@@ -586,27 +587,27 @@ default
             {
                 if(m == "Nom On")
                 {
-                    llSay(0,"/me " + n + " grabs and noms on " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + ". " + sOwnerNameInEmote + " looks back at " + g_dyn_his_s + " " + g_config_objectType_s + " to make sure " + n + " did not drool all over it.");
+                    sendEmote( n + " grabs and noms on " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + ". " + sOwnerNameInEmote + " looks back at " + g_dyn_his_s + " " + g_config_objectType_s + " to make sure " + n + " did not drool all over it.");
                 }
                 else if(m == "Chew On")
                 {
-                    llSay(0,"/me " + n + " starts to chew on " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + ". " + sOwnerNameInEmote + " is not too sure how to feel about this o.o...");
+                    sendEmote( n + " starts to chew on " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + ". " + sOwnerNameInEmote + " is not too sure how to feel about this o.o...");
                 }
                 else if(m == "Bite")
                 {
-                    llSay(0,"/me " + n + " bites down on " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + "! >w<");
+                    sendEmote( n + " bites down on " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + "! >w<");
                 }
                 else if(m == "Pet")
                 {
-                    llSay(0,"/me " + n + " takes a hold of " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + " and starts petting it! ♥");
+                    sendEmote( n + " takes a hold of " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + " and starts petting it! ♥");
                 }
                 else if(m == "Tug")
                 {
-                    llSay(0,"/me " + n + " grabs and tugs hard on " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + "! " + sOwnerNameInEmote + " tugs back on " + n + g_dyn_poss_toucher_s + " ear! :3");
+                    sendEmote( n + " grabs and tugs hard on " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + "! " + sOwnerNameInEmote + " tugs back on " + n + g_dyn_poss_toucher_s + " ear! :3");
                 }
                 else if(m == "Grab")
                 {
-                    llSay(0,"/me " + n + " grabs " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + " and just holds it. " + sOwnerNameInEmote + " looks back at " + n + ".");
+                    sendEmote( n + " grabs " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + " and just holds it. " + sOwnerNameInEmote + " looks back at " + n + ".");
                 }
                 else if(m == "Play")
                 {
@@ -614,48 +615,45 @@ default
                 }
                 else if(m == "Hug")
                 {
-                    llSay(0,"/me " + n + " grabs " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + " and gives it a big hug! ♥");
+                    sendEmote( n + " grabs " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + " and gives it a big hug! ♥");
                 }
                 else if(m == "Hold")
                 {
-                    llSay(0,"/me " + n + " grabs and holds " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + ", refusing to let " + g_dyn_him_s + " go!");
+                    sendEmote( n + " grabs and holds " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + ", refusing to let " + g_dyn_him_s + " go!");
                 }
                 else if(m == "Fluff")
                 {
-                    llSay(0,"/me " + n + " fluffs " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + ", making it nice and soft. ^^");
+                    sendEmote( n + " fluffs " + sOwnerNameInEmote + g_dyn_poss_owner_s + " " + g_config_objectType_s + ", making it nice and soft. ^^");
                 }
-                llSetObjectName(g_cached_objectName_s);
             }
             /// Adult Emotes ////
             else if(bMenuType == ADULT_MENU) // 1
             {
-                llSetObjectName(" ");
                 if(m == "Lick Genitals")
                 {
                     if( g_config_isMale_b == 1){
-                        llSay(0,"/me " + n + " bends down in front of " + sOwnerNameInEmote + ", slowly moving their hands to reach " + sOwnerNameInEmote + g_dyn_poss_owner_s + " butt, squeezing it softly with one hand as they grab his cock, slowly licking it up and down while looking at him...");
+                        sendEmote( n + " bends down in front of " + sOwnerNameInEmote + ", slowly moving their hands to reach " + sOwnerNameInEmote + g_dyn_poss_owner_s + " butt, squeezing it softly with one hand as they grab his cock, slowly licking it up and down while looking at him...");
                     }
                     else{
-                        llSay(0,"/me " + n + " bends down in front of " + sOwnerNameInEmote + ", slowly kissing her lap and then put their mouth on her pussy, licking slowly...");
+                        sendEmote( n + " bends down in front of " + sOwnerNameInEmote + ", slowly kissing her lap and then put their mouth on her pussy, licking slowly...");
                     }
                 }
                 else if(m == "Lick Butt")
                 {
-                    llSay(0,"/me " + n + " bends down and licks " + sOwnerNameInEmote + g_dyn_poss_owner_s + " butt! ♥");
+                    sendEmote( n + " bends down and licks " + sOwnerNameInEmote + g_dyn_poss_owner_s + " butt! ♥");
                 }
                 else if(m == "Smack Butt")
                 {
-                    llSay(0,"/me " + n + " smacks " + sOwnerNameInEmote + g_dyn_poss_owner_s + " butt!");
+                    sendEmote( n + " smacks " + sOwnerNameInEmote + g_dyn_poss_owner_s + " butt!");
                 }
                 else if(m == "Grope")
                 {
-                    llSay(0,"/me " + n + " gropes " + sOwnerNameInEmote + "! ^_~");
+                    sendEmote( n + " gropes " + sOwnerNameInEmote + "! ^_~");
                 }
                 else if(m == "Hump")
                 {
-                    llSay(0,"/me " + n + " grabs " + sOwnerNameInEmote + " from behind and starts humpin!");
+                    sendEmote( n + " grabs " + sOwnerNameInEmote + " from behind and starts humpin!");
                 }
-                llSetObjectName(g_cached_objectName_s);
             }
             // fClearListeners();
         }
