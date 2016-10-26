@@ -15,7 +15,7 @@
 // https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
 // A version checker is included.
 
-string g_current_version              =   "3.7.40";
+string g_current_version              =   "3.8.1";
 integer touchDelay = 1; // How long to wait before displaying owner menu
 // Save settings to prim desc. Disable to avoid breaking objects that also use this storage method. you will however lose your settings if the script is reset.
 integer g_saveToDesc_b                = FALSE;
@@ -186,7 +186,7 @@ integer ADULT_MENU = 4;
 
 xlGenerateDialogText(string sHelpText, list lButtons)
 {
-    sHelpText = "Based on [https://github.com/XenHat/OpenEmoteTail OpenEmoteTail] "
+    sHelpText = "[https://github.com/XenHat/OpenEmoteTail OpenEmoteTail] "
     + g_current_version + " by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
     if(bMenuType == OWNER_MENU)
     {
@@ -590,33 +590,29 @@ default
             update_type = "major version"; jump update;
         }
         else if (llList2Integer(new_version_l, 1) > llList2Integer(cur_version_l, 1)){
-            update_type = "minor version"; jump update;
+            update_type = "version"; jump update;
         }
         else if (llList2Integer(cur_version_l, 2) < llList2Integer(new_version_l, 2)){
             update_type = "patch"; jump update;
         }
         jump end;
         @update;
-        gUpdateMessage_s = "\nA new " + update_type + " is available:"
-            +"\n"
-            +"\n[https://github.com/"
-                +repository+"/tree/"+new_version_s+"/ "+new_version_s
-                +"] \""+llJsonGetValue(body,["name"])+"\"";
+        gUpdateMessage_s = "\nA new " + update_type + " is available!\n"
+            +"[" + new_version_s+ "] \""+llJsonGetValue(body,["name"])+"\"";
             string update_description_s = llJsonGetValue(body,["body"]);
-            if(llStringLength(update_description_s) > 256)
+            if(llStringLength(update_description_s) >= 128)
             {
-                update_description_s = "Too many changes, see [https://github.com/"
-                +repository+"/tree/"+new_version_s+"/ online]";
+                update_description_s = "Too many changes, see link below.";
             }
             gUpdateMessage_s +="\n"+update_description_s
-            +"\nYou can view the changelog ["+"https://github.com/"+repository+"/compare/"
-                +g_current_version+"..."+new_version_s+" on GitHub].\n\n"
+            +"\n["+"https://github.com/"+repository+"/compare/"
+                +g_current_version+"..."+new_version_s+" What's new?]\n\n"
 
-            +"Raw scripts to copy-paste:\n[https://raw.githubusercontent.com/"+repository
+            +"Your new script(s):\n[https://raw.githubusercontent.com/"+repository
                 +"/"+new_version_s+"/tailmenu.lsl OpenEmoteTail.lsl]";
             ;
             gShowUpdateCheckButton_b = FALSE;
-        llOwnerSay("["+llGetScriptName()+".lsl] "+g_current_version + "\n"+gUpdateMessage_s);
+        llOwnerSay("["+llGetScriptName()+".lsl] ("+g_current_version + "):\n"+gUpdateMessage_s);
         @end;
         llSetMemoryLimit(llGetUsedMemory()+gMemoryLimit_i);
     }
