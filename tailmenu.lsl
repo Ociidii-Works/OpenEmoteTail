@@ -15,7 +15,7 @@
 // https://raw.github.com/Xenhat/OpenEmoteTail/master/tailmenu.lsl
 // A version checker is included.
 
-string g_current_version              =   "3.7.39";
+string g_current_version              =   "3.7.40";
 integer touchDelay = 1; // How long to wait before displaying owner menu
 // Save settings to prim desc. Disable to avoid breaking objects that also use this storage method. you will however lose your settings if the script is reset.
 integer g_saveToDesc_b                = FALSE;
