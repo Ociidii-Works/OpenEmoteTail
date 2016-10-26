@@ -17,6 +17,7 @@ The latest version of this script can always be found at
 A version checker is included.
 
 Todo: Use StringReplace instead of variables for Him/Her/His
+      Refactor Variables
       Add persistent config x.e
 */
 
@@ -49,7 +50,7 @@ integer g_config_removeIconInOwnerName_b    = TRUE;
 /////////////////////////////////////////////////////////////////////////
 /// Internal stuff, don't touch unless you know what you're doing! //////
 /////////////////////////////////////////////////////////////////////////
-string g_internal_version_s             = "3.8.2";
+string g_internal_version_s             = "3.8.3";
 string g_internal_repo_s                = "XenHat/OpenEmoteTail";
 key g_internal_httprid_k                = NULL_KEY;
 // 0: none, 1: error , 2: warning, 3: info, 4: debug
@@ -91,7 +92,7 @@ integer g_cached_listenHandle_i;
 key g_cached_lastToucher_k = NULL_KEY;
 key g_cached_owner_k;
 key g_cached_toucher_k;
-string g_cached_ownerName_s;
+string g_cached_ownerDisplayName_s;
 
 /// String construction cache ///
 string g_cached_objectName_s;
@@ -184,6 +185,22 @@ string Key2Link(key k)
     return "[secondlife:///app/agent/" + (string)k
     + "/about " + llGetDisplayName(k) + "]";
 }
+getDynamicEnding(string nameEnd)
+{
+    if(nameEnd == "")
+    {
+        nameEnd = llGetSubString(g_cached_ownerDisplayName_s, -1, -1);
+    }
+    if (nameEnd == "s")
+    {
+        g_dyn_poss_owner_s = "'";
+        dm(3,"getDynamicEnding","This is " + g_cached_ownerDisplayName_s + g_dyn_poss_owner_s + " " + g_config_objectType_s + ".");
+    }
+    else
+    {
+        g_dyn_poss_owner_s = "'s";
+    }
+}
 init()
 {
     g_cached_owner_k = llGetOwner();
@@ -191,7 +208,7 @@ init()
     string et = "init";
     dm(4,et,"Running OET v" + g_internal_version_s + "...");
     g_cached_objectName_s = llGetObjectName();
-    g_cached_ownerName_s = llGetDisplayName(g_cached_owner_k);
+    g_cached_ownerDisplayName_s = llGetDisplayName(g_cached_owner_k);
     // simplistic gender auto-detection.
     if (g_config_saveToDesc_b)
     {
@@ -201,16 +218,7 @@ init()
             g_config_isMale_b = (integer)llList2Integer(llGetObjectDetails(g_cached_owner_k,[OBJECT_BODY_SHAPE_TYPE]),0);
         }
     }
-    string nameEnd = llGetSubString(g_cached_ownerName_s, -1, -1);
-    if (nameEnd == "s")
-    {
-        g_dyn_poss_owner_s = "'";
-        dm(3,et,"This is " + g_cached_ownerName_s + g_dyn_poss_owner_s + " " + g_config_objectType_s + ".");
-    }
-    else
-    {
-        g_dyn_poss_owner_s = "'s";
-    }
+    getDynamicEnding("");
     fSetGender( g_config_isMale_b);
     memstats(et);
 }
@@ -236,7 +244,18 @@ xlGenerateDialogText(string sHelpText, list lButtons)
         sHelpText += g_cached_updateMsg_s;
     }
     llSetTimerEvent(0.0);
+    if (llGetObjectName() == " ") // when shit goes left
+    {
+        dm(4,"xlGenerateDialogText","Object name is empty!");
+        list name_list = llParseString2List(llKey2Name(g_cached_owner_k), [" "],[]);
+        string first_name = llList2String(name_list,0);
+        getDynamicEnding(first_name);
+        llSetObjectName(first_name + g_dyn_poss_owner_s + " " + g_config_objectType_s);
+        g_cached_objectName_s = llGetObjectName();
+        dm(4,"xlGenerateDialogText","Fixing empty item name with '"+g_cached_objectName_s+"'");
+    }
     llSetTimerEvent(g_internal_listenTimeout_i);
+
     llDialog(g_cached_toucher_k,sHelpText,lButtons,g_cached_dialogChannel_i);
 }
 integer bMenuType;
@@ -384,17 +403,15 @@ default
         llSetMemoryLimit(llGetUsedMemory()+g_internal_memoryLimit_i); // fat. I know.
         if (llGetScriptName() == "New Script")
         {
-            string oname = llGetObjectName();
             llSetObjectName("");
             llOwnerSay("/me secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect stares at you from far away... \"'New Script', really?\"");
-            llSetObjectName(oname);
+            llSetObjectName(g_cached_objectName_s);
         }
         if (llGetObjectName() == "Object")
         {
-            string oname = llGetObjectName();
             llSetObjectName("");
             llOwnerSay("/me secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect stares at you from far away... \"'OH COME ON! Name that poor prim!\"");
-            llSetObjectName(oname);
+            llSetObjectName(g_cached_objectName_s);
         }
         getLatestUpdate();
     }
@@ -535,7 +552,7 @@ default
             }
             else
             {
-                sOwnerNameInEmote = g_cached_ownerName_s;
+                sOwnerNameInEmote = g_cached_ownerDisplayName_s;
             }
             if(bMenuType == SOFT_MENU)
             {
@@ -565,7 +582,7 @@ default
                 }
                 else if(m == "Play")
                 {
-                    llSay(0,g_cached_ownerName_s + " swishes " + g_dyn_his_s + " " + g_config_objectType_s + " about. " + n + " grabs it and starts tugging it playfully.");
+                    llSay(0,g_cached_ownerDisplayName_s + " swishes " + g_dyn_his_s + " " + g_config_objectType_s + " about. " + n + " grabs it and starts tugging it playfully.");
                 }
                 else if(m == "Hug")
                 {
