@@ -17,7 +17,6 @@ The latest version of this script can always be found at
 A version checker is included.
 
 Todo: Use StringReplace instead of variables for Him/Her/His
-      Refactor Variables
       Add persistent config x.e
 */
 
@@ -50,11 +49,17 @@ integer g_config_removeIconInOwnerName_b    = TRUE;
 /////////////////////////////////////////////////////////////////////////
 /// Internal stuff, don't touch unless you know what you're doing! //////
 /////////////////////////////////////////////////////////////////////////
-string g_internal_version_s             = "3.8.3";
+string g_internal_version_s             = "3.8.4";
 string g_internal_repo_s                = "XenHat/OpenEmoteTail";
 key g_internal_httprid_k                = NULL_KEY;
 // 0: none, 1: error , 2: warning, 3: info, 4: debug
-integer g_internal_verbosity_i          = 2;
+integer LOG_NONE = 0;
+integer LOG_ERRR = 1;
+integer LOG_WARN = 2;
+integer LOG_INFO = 3;
+integer LOG_VERB = 4;
+integer LOG_DEBG = 5;
+integer g_internal_verbosity_i          = LOG_WARN;
 integer g_internal_touchTime_i          = -1;
 integer g_internal_listenTimeout_i      = 60;
 integer g_internal_showMemoryStats_b    = 0;
@@ -136,42 +141,59 @@ saveToDesc()
 }
 memstats(string type)
 {
-    if(!g_internal_showMemoryStats_b)
+    if(!g_internal_showMemoryStats_b || g_internal_verbosity_i < LOG_INFO)
     {
         return;
     }
-    dm(4,type,(string)llGetMemoryLimit() + " kb allocated");
-    dm(4,type,(string)llGetUsedMemory() + " kb used");
-    dm(4,type,(string)llGetFreeMemory() + " kb free");
+    dm(LOG_DEBG,type,(string)llGetMemoryLimit() + " kb allocated");
+    dm(LOG_DEBG,type,(string)llGetUsedMemory() + " kb used");
+    dm(LOG_DEBG,type,(string)llGetFreeMemory() + " kb free");
 }
-dm(integer type, string e, string m)
+dm(integer level, string function_s, string message_s)
 {
     /*  t
-            1 = error
-            2 = warning
-            3 = info
-            4 = debug
-            5 = memstats
+            see LOG_* definitions
         e
             event the message comes from
         m
             the actual message
     */
-    if(type == 5)
-    llOwnerSay("D:" + e + " " + m);
-
-    m = " " + llStringTrim(m,0x3);
-    if(type == 1 && g_internal_verbosity_i >= 1)
-    llOwnerSay("E:" + e + " " + m);
-
-    if(type == 2 && g_internal_verbosity_i >= 2)
-    llOwnerSay("W:" + e + " " + m);
-
-    if(type == 3 && g_internal_verbosity_i >= 3)
-    llOwnerSay("I:" + e + " " + m);
-
-    if(type == 4 && g_internal_verbosity_i >= 4)
-    llOwnerSay("D:" + e + " " + m);
+    if(level == LOG_NONE)
+    jump end;
+    // Reminder: LSL is not a short-circuiting language
+    // using || or && will always evaluate both before taking action.
+    // This is a speed hack. I hope.
+    if(g_internal_verbosity_i < level)
+    {
+        jump end;
+    }
+    string prefix_s;
+    if(g_internal_verbosity_i >= LOG_DEBG)
+    {
+        prefix_s = function_s+"()";
+        if(level == LOG_ERRR)
+        {
+            prefix_s += " [E] ";
+        }
+        else if(level == LOG_WARN)
+        {
+            prefix_s += " [W] ";
+        }
+        else if(level == LOG_INFO)
+        {
+            prefix_s += " [I] ";
+        }
+        else if(level == LOG_VERB)
+        {
+            prefix_s += " [V] ";
+        }
+        else if(level == LOG_DEBG)
+        {
+            prefix_s += " [D] ";
+        }
+    }
+    llOwnerSay(prefix_s+llStringTrim(message_s,0x3));
+    @end;
 }
 twitch(string times)
 {
@@ -194,7 +216,7 @@ getDynamicEnding(string nameEnd)
     if (nameEnd == "s")
     {
         g_dyn_poss_owner_s = "'";
-        dm(3,"getDynamicEnding","This is " + g_cached_ownerDisplayName_s + g_dyn_poss_owner_s + " " + g_config_objectType_s + ".");
+        dm(LOG_INFO,"getDynamicEnding","This is " + g_cached_ownerDisplayName_s + g_dyn_poss_owner_s + " " + g_config_objectType_s + ".");
     }
     else
     {
@@ -206,7 +228,7 @@ init()
     g_cached_owner_k = llGetOwner();
     //Message stuff
     string et = "init";
-    dm(4,et,"Running OET v" + g_internal_version_s + "...");
+    dm(LOG_DEBG,et,"Running OET v" + g_internal_version_s + "...");
     g_cached_objectName_s = llGetObjectName();
     g_cached_ownerDisplayName_s = llGetDisplayName(g_cached_owner_k);
     // simplistic gender auto-detection.
@@ -246,13 +268,13 @@ xlGenerateDialogText(string sHelpText, list lButtons)
     llSetTimerEvent(0.0);
     if (llGetObjectName() == " ") // when shit goes left
     {
-        dm(4,"xlGenerateDialogText","Object name is empty!");
+        dm(LOG_DEBG,"xlGenerateDialogText","Object name is empty!");
         list name_list = llParseString2List(llKey2Name(g_cached_owner_k), [" "],[]);
         string first_name = llList2String(name_list,0);
         getDynamicEnding(first_name);
         llSetObjectName(first_name + g_dyn_poss_owner_s + " " + g_config_objectType_s);
         g_cached_objectName_s = llGetObjectName();
-        dm(4,"xlGenerateDialogText","Fixing empty item name with '"+g_cached_objectName_s+"'");
+        dm(LOG_DEBG,"xlGenerateDialogText","Fixing empty item name with '"+g_cached_objectName_s+"'");
     }
     llSetTimerEvent(g_internal_listenTimeout_i);
 
@@ -263,14 +285,14 @@ fBuildMenu(integer newMenuType_i)
 {
     bMenuType = newMenuType_i;
     string et = "fBuildMenu";
-    if(g_internal_verbosity_i>2) memstats(et);
-    dm(4,et,"Received Menu Type: " + (string)bMenuType);
-    dm(4,et,"Received Key: " + (string)g_cached_toucher_k);
+    memstats(et);
+    dm(LOG_DEBG,et,"Received Menu Type: " + (string)bMenuType);
+    dm(LOG_DEBG,et,"Received Key: " + (string)g_cached_toucher_k);
     g_cached_dialogChannel_i = 0x80000000 | ((integer)("0x"+(string)g_cached_toucher_k) ^ g_internal_appID_i);
-    dm(4,et,"Channel = " + (string)g_cached_dialogChannel_i);
+    dm(LOG_DEBG,et,"Channel = " + (string)g_cached_dialogChannel_i);
     fClearListeners();
     g_cached_listenHandle_i = llListen(g_cached_dialogChannel_i, "", g_cached_toucher_k, "");
-    dm(4,et,"Now listening on = " + (string)g_cached_dialogChannel_i + " for secondlife:///app/agent/"+(string)g_cached_toucher_k+"/displayname");
+    dm(LOG_DEBG,et,"Now listening on = " + (string)g_cached_dialogChannel_i + " for secondlife:///app/agent/"+(string)g_cached_toucher_k+"/displayname");
 
 
     if(bMenuType == OWNER_MENU)
@@ -280,18 +302,18 @@ fBuildMenu(integer newMenuType_i)
         {
             return;
         }
-        dm(3,et,"Entering Owner Menu");
+        dm(LOG_DEBG,et,"Entering Owner Menu");
         { // Owner Menu Root
             list menu_buttons = ["Waggle", "Gender"];
-            dm(3,et,"Checking Lock");
+            dm(LOG_INFO,et,"Checking Lock");
             if(!g_status_locked_i) // if not locked
             {
-                dm(4,et,"Is Unlocked");
+                dm(LOG_INFO,et,"Is Unlocked");
                 menu_buttons += ["Lock"];
             }
             else // if locked
             {
-                dm(4,et,"Is Locked");
+                dm(LOG_INFO,et,"Is Locked");
                 menu_buttons += ["Unlock"];
             }
             if (g_status_showUpdateBtn_b)
@@ -303,58 +325,64 @@ fBuildMenu(integer newMenuType_i)
     }
     else if(bMenuType == GENDER_MENU) // Gender Menu
     {
-        dm(3,et,"Entering Gender Menu");
+        dm(LOG_DEBG,et,"Entering Gender Menu");
         xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
     }
     //// Others Menu ////
     else if(g_cached_toucher_k != g_cached_owner_k)
     {
-        dm(4,et,"Checking Lock for Others");
+        dm(LOG_DEBG,et,"Checking Lock for Others");
         if(g_status_locked_i)
         {
             llListenRemove(g_cached_listenHandle_i);
         }
         else // if not locked and not owner
         {
-            dm(4,et,"Entering Others Menu");
+            dm(LOG_DEBG,et,"Entering Others Menu");
             if(bMenuType == OTHERS_MENU)
             {
-                dm(4,et,"Building Choice Menu");
+                dm(LOG_DEBG,et,"Building Choice Menu");
                 xlGenerateDialogText("Chose an Emote type",g_menu_Emote_l1Type_l);
             }
             else if(bMenuType == SOFT_MENU)
             {
-                dm(4,et,"Building Soft Menu");
+                dm(LOG_DEBG,et,"Building Soft Menu");
                 xlGenerateDialogText("Okay, what do you want to do?",g_menu_Emote_l2Soft_l);
             }
             else if(bMenuType == ADULT_MENU)
             {
-                dm(4,et,"Building Adult Menu");
+                dm(LOG_DEBG,et,"Building Adult Menu");
                 xlGenerateDialogText("Feeling naughty, eh? How much?",g_menu_Emote_l2Adlt_l);
             }
         }
     }
     else
     {
-        dm(4,et,"Something unexpected happened D:");
+        dm(LOG_ERRR,et,"Something unexpected happened D:");
     }
     twitch("1");
-    if(g_internal_verbosity_i>2) memstats(et);
+    memstats(et);
 }
 fClearListeners()
 {
     string et = "fClearListeners";
     // Stop listening. It's wise to do this to reduce lag
+    if(g_cached_listenHandle_i != -1)
+    {
+        dm(LOG_DEBG,et,"There was no listeners to close");
+        return;
+    }
     llListenRemove(g_cached_listenHandle_i);
+    g_cached_listenHandle_i = -1;
+    dm(LOG_VERB,et,"Listener closed");
+    llInstantMessage(g_cached_toucher_k,"Timed out. Click the tail again to get a menu");
     // Stop the timer now that its job is done
     llSetTimerEvent(0.0);
-    //llInstantMessage(g_cached_toucher_k,"Timed out. Click the tail again to get a menu");
-    dm(3,et,"Listener closed");
 }
 getLatestUpdate()
 {
     llSetMemoryLimit(64000);
-    if(g_internal_verbosity_i>=4) llOwnerSay("Looking for update...");
+    dm(LOG_VERB,"getLatestUpdate","Looking for update...");
     g_internal_httprid_k = llHTTPRequest("https://api.github.com/repos/"+g_internal_repo_s+"/releases/latest?access_token=603ee815cda6fb45fcc16876effbda017f158bef",[], "");
 }
 default
@@ -363,7 +391,7 @@ default
     {
         if (iChange & CHANGED_OWNER) //note that it's & and not &&... it's bitwise!
         {
-            llOwnerSay("The owner of the object has changed. Resetting!");
+            dm(LOG_INFO,"changed","The owner of the object has changed. Resetting!");
             llResetScript();
         }
     }
@@ -374,7 +402,7 @@ default
         twitch("3");
         if(kID != NULL_KEY)
         llRequestPermissions(g_cached_owner_k, PERMISSION_TAKE_CONTROLS );
-        if(g_internal_verbosity_i>2) memstats("attach");
+        memstats("attach");
         getLatestUpdate();
     }
     on_rez(integer start_param)
@@ -423,7 +451,7 @@ default
     {
         g_cached_toucher_k = llDetectedKey(0);
         string et = "touch_end";
-        dm(4,"touch_end",(string)g_cached_toucher_k);
+        dm(LOG_DEBG,"touch_end",(string)g_cached_toucher_k);
         //llOwnerSay("Level 1");
         if ((g_status_inUse_b) /* is the tail already in use? */
             || ((g_cached_lastToucher_k != NULL_KEY) // Not a null key (default value)
@@ -431,13 +459,13 @@ default
         {
             //llOwnerSay("Level 2");
             g_cached_lastToucher_k = g_cached_toucher_k; // Store the new key
-            dm(4,et,"Clearing listener because toucher changed");
+            dm(LOG_DEBG,et,"Clearing listener because toucher changed");
             fClearListeners();
         }
-        dm(4,et,"Checking user and generating new menus");
+        dm(LOG_DEBG,et,"Checking user and generating new menus");
         if(g_cached_toucher_k == g_cached_owner_k)
         {
-            dm(4,et,"Toucher is owner");
+            dm(LOG_DEBG,et,"Toucher is owner");
             if (llGetUnixTime() >= (g_internal_touchTime_i + g_config_touchDelay_i))
             {
                 fBuildMenu(OWNER_MENU);
@@ -445,7 +473,7 @@ default
         }
         if (g_cached_toucher_k != g_cached_owner_k)
         {
-            dm(4,et,"Toucher is other");
+            dm(LOG_DEBG,et,"Toucher is other");
             fBuildMenu(OTHERS_MENU);
             g_cached_toucherName_s = llGetDisplayName(g_cached_toucher_k);
             llOwnerSay(g_cached_toucherName_s + " is touching your " + g_config_objectType_s + "...");
@@ -466,9 +494,9 @@ default
     {
         if(!c) return; // Don't listen on channel 0
         string et = "listen";
-        dm(4,et,"Channel received: " + (string)c);
-        dm(4,et,"Listening for menu type = " + (string)bMenuType);
-        dm(4,et,n + " selected " + m);
+        dm(LOG_DEBG,et,"Channel received: " + (string)c);
+        dm(LOG_DEBG,et,"Listening for menu type = " + (string)bMenuType);
+        dm(LOG_VERB,et,n + " selected " + m);
         if (g_config_removeIconInNameLinks_b)
         {
             n=Key2Link(g_cached_toucher_k);
@@ -528,16 +556,16 @@ default
         }
         if (bMenuType == GENDER_MENU)
         {
-            dm(4,et,"Processing Gender Response");
+            dm(LOG_DEBG,et,"Processing Gender Response");
             if(m == "Tacos")
             {
                 fSetGender(0);
-                dm(3,et,"gender set to female");
+                dm(LOG_VERB,et,"gender set to female");
             }
             else if(m == "Sausage")
             {
                 fSetGender(1);
-                dm(3,et,"gender set to male");
+                dm(LOG_VERB,et,"gender set to male");
             }
             fClearListeners();
         }
@@ -631,12 +659,6 @@ default
             }
             // fClearListeners();
         }
-        //// Owner Menu ////
-        // else
-        // {
-            // dm(2,et,"Something unexpected happened");
-            //dm(4,et,"Message Received: " + m);
-        // }
     }
     http_response(key request_id, integer status, list metadata, string body)
     {
