@@ -65,6 +65,8 @@ string sGenderHis;
 string sGenderHeCap;
 integer APP_ID = 83; // kittyface
 integer gMemoryLimit_i = 3000;
+integer gShowUpdateCheckButton_b = TRUE;
+string gUpdateMessage_s = "";
 //// Functions ////
 fSetGender(integer iNewGender)
 {
@@ -184,7 +186,12 @@ integer ADULT_MENU = 4;
 
 xlGenerateDialogText(string sHelpText, list lButtons)
 {
-    sHelpText = "Based on [https://github.com/XenHat/OpenEmoteTail OpenEmoteTail] " + g_current_version + " by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
+    sHelpText = "Based on [https://github.com/XenHat/OpenEmoteTail OpenEmoteTail] "
+    + g_current_version + " by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
+    if(bMenuType == OWNER_MENU)
+    {
+        sHelpText += gUpdateMessage_s;
+    }
     llSetTimerEvent(0.0);
     llSetTimerEvent(listen_timeout);
     llDialog(kToucherKey,sHelpText,lButtons,iChannel);
@@ -213,19 +220,23 @@ fBuildMenu(integer newMenuType_i)
         }
         dm(3,et,"Entering Owner Menu");
         { // Owner Menu Root
+            list menu_buttons = ["Waggle", "Gender"];
             dm(3,et,"Checking Lock");
-            string lockbuttonText;
             if(!lock) // if not locked
             {
                 dm(4,et,"Is Unlocked");
-                lockbuttonText = "Lock";
+                menu_buttons += ["Lock"];
             }
             else // if locked
             {
                 dm(4,et,"Is Locked");
-                lockbuttonText = "Unlock";
+                menu_buttons += ["Unlock"];
             }
-            xlGenerateDialogText("\nChange " + objectType + " option",["Waggle",lockbuttonText,"Gender","Check Update"]);
+            if (gShowUpdateCheckButton_b)
+            {
+                menu_buttons += ["Check Update"];
+            }
+            xlGenerateDialogText("\nChange " + objectType + " option",menu_buttons);
         }
     }
     else if(bMenuType == GENDER_MENU) // Gender Menu
@@ -586,19 +597,26 @@ default
         }
         jump end;
         @update;
-        string message_out = "["+llGetScriptName()+".lsl] "+g_current_version
-            +"\nA new " + update_type + " is available:"
+        gUpdateMessage_s = "\nA new " + update_type + " is available:"
             +"\n"
             +"\n[https://github.com/"
                 +repository+"/tree/"+new_version_s+"/ "+new_version_s
-                +"] \""+llJsonGetValue(body,["name"])+"\""
-            +"\n"+llJsonGetValue(body,["body"])
+                +"] \""+llJsonGetValue(body,["name"])+"\"";
+            string update_description_s = llJsonGetValue(body,["body"]);
+            if(llStringLength(update_description_s) > 256)
+            {
+                update_description_s = "Too many changes, see [https://github.com/"
+                +repository+"/tree/"+new_version_s+"/ online]";
+            }
+            gUpdateMessage_s +="\n"+update_description_s
             +"\nYou can view the changelog ["+"https://github.com/"+repository+"/compare/"
                 +g_current_version+"..."+new_version_s+" on GitHub].\n\n"
 
             +"Raw scripts to copy-paste:\n[https://raw.githubusercontent.com/"+repository
                 +"/"+new_version_s+"/tailmenu.lsl OpenEmoteTail.lsl]";
-        llOwnerSay(message_out);
+            ;
+            gShowUpdateCheckButton_b = FALSE;
+        llOwnerSay("["+llGetScriptName()+".lsl] "+g_current_version + "\n"+gUpdateMessage_s);
         @end;
         llSetMemoryLimit(llGetUsedMemory()+gMemoryLimit_i);
     }
