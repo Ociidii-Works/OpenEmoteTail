@@ -49,7 +49,7 @@ integer g_config_removeIconInOwnerName_b    = TRUE;
 /////////////////////////////////////////////////////////////////////////
 /// Internal stuff, don't touch unless you know what you're doing! //////
 /////////////////////////////////////////////////////////////////////////
-string g_internal_version_s             = "3.8.5";
+string g_internal_version_s             = "3.8.6";
 string g_internal_repo_s                = "XenHat/OpenEmoteTail";
 key g_internal_httprid_k                = NULL_KEY;
 // 0: none, 1: error , 2: warning, 3: info, 4: debug
@@ -61,7 +61,7 @@ integer LOG_VERB = 4;
 integer LOG_DEBG = 5;
 integer g_internal_verbosity_i          = LOG_WARN;
 integer g_internal_touchTime_i          = -1;
-integer g_internal_listenTimeout_i      = 60;
+integer g_internal_listenTimeout_i      = 7;
 integer g_internal_showMemoryStats_b    = 0;
 integer g_internal_memoryLimit_i = 3000;
 integer g_internal_appID_i = 1415670124; // "Tail" -> Hex -> Integer
@@ -92,11 +92,11 @@ list g_menu_Emote_l2Adlt_l = [
 ];
 
 /// Cached values ///
-integer g_cached_dialogChannel_i;
-integer g_cached_listenHandle_i;
+integer g_cached_dialogChannel_i = -1;
+integer g_cached_listenHandle_i = -1;
 key g_cached_lastToucher_k = NULL_KEY;
-key g_cached_owner_k;
-key g_cached_toucher_k;
+key g_cached_owner_k = NULL_KEY;
+key g_cached_toucher_k = NULL_KEY;
 string g_cached_ownerDisplayName_s;
 
 /// String construction cache ///
@@ -232,13 +232,13 @@ init()
     g_cached_ownerDisplayName_s = llGetDisplayName(g_cached_owner_k);
     if (llGetObjectName() == " ") // when shit goes left
     {
-        dm(LOG_DEBG,"xlGenerateDialogText","Object name is empty!");
+        dm(LOG_DEBG,"xlCreateMenu","Object name is empty!");
         list name_list = llParseString2List(llKey2Name(g_cached_owner_k), [" "],[]);
         string first_name = llList2String(name_list,0);
         getDynamicEnding(first_name);
         llSetObjectName(first_name + g_dyn_poss_owner_s + " " + g_config_objectType_s);
         g_cached_objectName_s = llGetObjectName();
-        dm(LOG_DEBG,"xlGenerateDialogText","Fixing empty item name with '"+g_cached_objectName_s+"'");
+        dm(LOG_DEBG,"xlCreateMenu","Fixing empty item name with '"+g_cached_objectName_s+"'");
     }
     else
     {
@@ -270,7 +270,7 @@ integer OTHERS_MENU = 2;
 integer SOFT_MENU = 3;
 integer ADULT_MENU = 4;
 
-xlGenerateDialogText(string sHelpText, list lButtons)
+xlCreateMenu(string sHelpText, list lButtons)
 {
     sHelpText = "[https://github.com/XenHat/OpenEmoteTail OpenEmoteTail] "
     + g_internal_version_s + " by secondlife:///app/agent/f1a73716-4ad2-4548-9f0e-634c7a98fe86/inspect.";
@@ -284,10 +284,10 @@ xlGenerateDialogText(string sHelpText, list lButtons)
     llDialog(g_cached_toucher_k,sHelpText,lButtons,g_cached_dialogChannel_i);
 }
 integer bMenuType;
-fBuildMenu(integer newMenuType_i)
+xlGenerateMenuData(integer newMenuType_i)
 {
     bMenuType = newMenuType_i;
-    string et = "fBuildMenu";
+    string et = "xlGenerateMenuData";
     memstats(et);
     dm(LOG_DEBG,et,"Received Menu Type: " + (string)bMenuType);
     dm(LOG_DEBG,et,"Received Key: " + (string)g_cached_toucher_k);
@@ -322,13 +322,13 @@ fBuildMenu(integer newMenuType_i)
             {
                 menu_buttons += ["Check Update"];
             }
-            xlGenerateDialogText("\nChange " + g_config_objectType_s + " option",menu_buttons);
+            xlCreateMenu("\nChange " + g_config_objectType_s + " option",menu_buttons);
         }
     }
     else if(bMenuType == GENDER_MENU) // Gender Menu
     {
         dm(LOG_DEBG,et,"Entering Gender Menu");
-        xlGenerateDialogText("Sausage or Tacos?",["Sausage","Tacos"]);
+        xlCreateMenu("Sausage or Tacos?",["Sausage","Tacos"]);
     }
     //// Others Menu ////
     else if(g_cached_toucher_k != g_cached_owner_k)
@@ -336,7 +336,7 @@ fBuildMenu(integer newMenuType_i)
         dm(LOG_DEBG,et,"Checking Lock for Others");
         if(g_status_locked_i)
         {
-            llListenRemove(g_cached_listenHandle_i);
+            fClearListeners();
         }
         else // if not locked and not owner
         {
@@ -344,17 +344,17 @@ fBuildMenu(integer newMenuType_i)
             if(bMenuType == OTHERS_MENU)
             {
                 dm(LOG_DEBG,et,"Building Choice Menu");
-                xlGenerateDialogText("Chose an Emote type",g_menu_Emote_l1Type_l);
+                xlCreateMenu("Chose an Emote type",g_menu_Emote_l1Type_l);
             }
             else if(bMenuType == SOFT_MENU)
             {
                 dm(LOG_DEBG,et,"Building Soft Menu");
-                xlGenerateDialogText("Okay, what do you want to do?",g_menu_Emote_l2Soft_l);
+                xlCreateMenu("Okay, what do you want to do?",g_menu_Emote_l2Soft_l);
             }
             else if(bMenuType == ADULT_MENU)
             {
                 dm(LOG_DEBG,et,"Building Adult Menu");
-                xlGenerateDialogText("Feeling naughty, eh? How much?",g_menu_Emote_l2Adlt_l);
+                xlCreateMenu("Feeling naughty, eh? How much?",g_menu_Emote_l2Adlt_l);
             }
         }
     }
@@ -369,15 +369,14 @@ fClearListeners()
 {
     string et = "fClearListeners";
     // Stop listening. It's wise to do this to reduce lag
-    if(g_cached_listenHandle_i != -1)
+    if(g_cached_listenHandle_i == -1)
     {
-        dm(LOG_DEBG,et,"There was no listeners to close");
+        dm(LOG_DEBG,et,"There is no listener to close");
         return;
     }
+    dm(LOG_VERB,et,"Listener handle "+(string)g_cached_listenHandle_i+" for " + (string)g_cached_dialogChannel_i + " closed");
     llListenRemove(g_cached_listenHandle_i);
     g_cached_listenHandle_i = -1;
-    dm(LOG_VERB,et,"Listener closed");
-    llInstantMessage(g_cached_toucher_k,"Timed out. Click the tail again to get a menu");
     // Stop the timer now that its job is done
     llSetTimerEvent(0.0);
 }
@@ -421,7 +420,7 @@ default
             return;
         }
         g_cached_toucher_k = llGetOwner();
-        fBuildMenu(GENDER_MENU);
+        xlGenerateMenuData(GENDER_MENU);
         twitch("2");
     }
     state_entry()
@@ -449,6 +448,7 @@ default
     }
     touch_start(integer num_detected)
     {
+        fClearListeners();
         g_internal_touchTime_i = llGetUnixTime();
     }
     touch_end(integer total_number)
@@ -472,13 +472,13 @@ default
             dm(LOG_DEBG,et,"Toucher is owner");
             if (llGetUnixTime() >= (g_internal_touchTime_i + g_config_touchDelay_i))
             {
-                fBuildMenu(OWNER_MENU);
+                xlGenerateMenuData(OWNER_MENU);
             }
         }
         if (g_cached_toucher_k != g_cached_owner_k)
         {
             dm(LOG_DEBG,et,"Toucher is other");
-            fBuildMenu(OTHERS_MENU);
+            xlGenerateMenuData(OTHERS_MENU);
             g_cached_toucherName_s = llGetDisplayName(g_cached_toucher_k);
             llOwnerSay(g_cached_toucherName_s + " is touching your " + g_config_objectType_s + "...");
             string nameEnd = llGetSubString(g_cached_toucherName_s, -1, -1);
@@ -491,6 +491,7 @@ default
                 g_dyn_poss_toucher_s = "'s";
             }
         }
+        dm(LOG_DEBG,et,"Running listener timout loop");
         llSetTimerEvent(g_internal_listenTimeout_i);
         g_internal_touchTime_i = 0;
     }
@@ -514,47 +515,40 @@ default
         {
             if(m == "Soft Emotes")
             {
-                llListenRemove(g_cached_listenHandle_i);
-                fBuildMenu(SOFT_MENU);
+                xlGenerateMenuData(SOFT_MENU);
             }
             else if(m == "Adult Emotes")
             {
-                llListenRemove(g_cached_listenHandle_i);
-                fBuildMenu(ADULT_MENU);
+                xlGenerateMenuData(ADULT_MENU);
             }
             else if(m == "Gender") // 2
             {
-                fBuildMenu(GENDER_MENU);
+                xlGenerateMenuData(GENDER_MENU);
             }
             else if(m == "Emote")
             {
-                xlGenerateDialogText("What kind of emotes do you want to do?",g_menu_Emote_l1Type_l);
+                xlCreateMenu("What kind of emotes do you want to do?",g_menu_Emote_l1Type_l);
             }
             else if(m == "Lock")
             {
-                llListenRemove(g_cached_listenHandle_i);
                 g_status_locked_i = TRUE;
                 llOwnerSay("Locked");
-                fClearListeners();
             }
             else if(m == "Unlock")
             {
-                llListenRemove(g_cached_listenHandle_i);
                 g_status_locked_i = FALSE;
                 llOwnerSay("Unlocked");
-                fClearListeners();
             }
             else if(m == "Waggle")
             {
-                llListenRemove(g_cached_listenHandle_i);
                 sendEmote( n + " waggles " + g_dyn_his_s + " " + g_config_objectType_s + " happily!");
                 twitch("7");
             }
             else if(m == "Check Update")
             {
-                llListenRemove(g_cached_listenHandle_i);
                 getLatestUpdate();
             }
+            fClearListeners();
         }
         if (bMenuType == GENDER_MENU)
         {
@@ -573,6 +567,7 @@ default
         }
         //// Soft Emotes ////
         // else if(bMenuType == SOFT_MENU)
+        // Scope hack.
         {
             string sOwnerNameInEmote;
             if (g_config_removeIconInNameLinks_b && g_config_removeIconInOwnerName_b)
@@ -698,6 +693,7 @@ default
     }
     timer()
     {
+        llInstantMessage(g_cached_toucher_k,"Timed out. Click the tail again to get a menu");
         fClearListeners();
     }
 }
