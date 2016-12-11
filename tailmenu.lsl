@@ -376,7 +376,7 @@ fClearListeners()
     llListenRemove(g_cached_listenHandle_i);
     g_cached_listenHandle_i = -1;
     // Stop the timer now that its job is done
-    llSetTimerEvent(0.0);
+    llSetTimerEvent(0);
 }
 getLatestUpdate()
 {
