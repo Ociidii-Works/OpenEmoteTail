@@ -513,7 +513,11 @@ default
         // tail commands
         // if(bMenuType == OTHERS_MENU)
         {
-            if(m == "Soft Emotes")
+            if(m == "Emote")
+            {
+                xlCreateMenu("What kind of emotes do you want to do?",g_menu_Emote_l1Type_l);
+            }
+            else if(m == "Soft Emotes")
             {
                 xlGenerateMenuData(SOFT_MENU);
             }
@@ -525,30 +529,29 @@ default
             {
                 xlGenerateMenuData(GENDER_MENU);
             }
-            else if(m == "Emote")
+            else
             {
-                xlCreateMenu("What kind of emotes do you want to do?",g_menu_Emote_l1Type_l);
+                if(m == "Lock")
+                {
+                    g_status_locked_i = TRUE;
+                    llOwnerSay("Locked");
+                }
+                else if(m == "Unlock")
+                {
+                    g_status_locked_i = FALSE;
+                    llOwnerSay("Unlocked");
+                }
+                else if(m == "Waggle")
+                {
+                    sendEmote( n + " waggles " + g_dyn_his_s + " " + g_config_objectType_s + " happily!");
+                    twitch("7");
+                }
+                else if(m == "Check Update")
+                {
+                    getLatestUpdate();
+                }
+                fClearListeners();
             }
-            else if(m == "Lock")
-            {
-                g_status_locked_i = TRUE;
-                llOwnerSay("Locked");
-            }
-            else if(m == "Unlock")
-            {
-                g_status_locked_i = FALSE;
-                llOwnerSay("Unlocked");
-            }
-            else if(m == "Waggle")
-            {
-                sendEmote( n + " waggles " + g_dyn_his_s + " " + g_config_objectType_s + " happily!");
-                twitch("7");
-            }
-            else if(m == "Check Update")
-            {
-                getLatestUpdate();
-            }
-            fClearListeners();
         }
         if (bMenuType == GENDER_MENU)
         {
