@@ -375,7 +375,6 @@ fClearListeners()
     dm(LOG_VERB,et,"Listener handle "+(string)g_cached_listenHandle_i+" for " + (string)g_cached_dialogChannel_i + " closed");
     llListenRemove(g_cached_listenHandle_i);
     g_cached_listenHandle_i = -1;
-    // Stop the timer now that its job is done
     llSetTimerEvent(0);
 }
 getLatestUpdate()
@@ -698,5 +697,6 @@ default
     {
         llInstantMessage(g_cached_toucher_k,"Timed out. Click the tail again to get a menu");
         fClearListeners();
+        llSetTimerEvent(0);
     }
 }
