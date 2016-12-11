@@ -49,7 +49,7 @@ integer g_config_removeIconInOwnerName_b    = TRUE;
 /////////////////////////////////////////////////////////////////////////
 /// Internal stuff, don't touch unless you know what you're doing! //////
 /////////////////////////////////////////////////////////////////////////
-string g_internal_version_s             = "3.8.6";
+string g_internal_version_s             = "3.8.7";
 string g_internal_repo_s                = "XenHat/OpenEmoteTail";
 key g_internal_httprid_k                = NULL_KEY;
 // 0: none, 1: error , 2: warning, 3: info, 4: debug
