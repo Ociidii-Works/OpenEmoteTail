@@ -291,8 +291,6 @@ xlGenerateMenuData(integer newMenuType_i)
     memstats(et);
     dm(LOG_DEBG,et,"Received Menu Type: " + (string)bMenuType);
     dm(LOG_DEBG,et,"Received Key: " + (string)g_cached_toucher_k);
-    g_cached_dialogChannel_i = 0x80000000 | ((integer)("0x"+(string)g_cached_toucher_k) ^ g_internal_appID_i);
-    dm(LOG_DEBG,et,"Channel = " + (string)g_cached_dialogChannel_i);
     fClearListeners();
     g_cached_listenHandle_i = llListen(g_cached_dialogChannel_i, "", g_cached_toucher_k, "");
     dm(LOG_DEBG,et,"Now listening on = " + (string)g_cached_dialogChannel_i + " for secondlife:///app/agent/"+(string)g_cached_toucher_k+"/displayname");
@@ -454,7 +452,9 @@ default
     touch_end(integer total_number)
     {
         g_cached_toucher_k = llDetectedKey(0);
+        g_cached_dialogChannel_i = llRound(llFrand(-200000));
         string et = "touch_end";
+        dm(LOG_DEBG,et,"Channel = " + (string)g_cached_dialogChannel_i);
         dm(LOG_DEBG,"touch_end",(string)g_cached_toucher_k);
         //llOwnerSay("Level 1");
         if ((g_status_inUse_b) /* is the tail already in use? */
