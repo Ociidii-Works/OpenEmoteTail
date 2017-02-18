@@ -87,7 +87,8 @@ list g_menu_Emote_l2Adlt_l = [
     "Grope"
     ,"Hump"
     ,"Lick Butt"
-    ,"Lick Genitals"
+    ,"Lick Penis"
+    ,"Lick Vagina"
     ,"Smack Butt"
 ];
 
@@ -626,14 +627,15 @@ default
             /// Adult Emotes ////
             else if(bMenuType == ADULT_MENU) // 1
             {
-                if(m == "Lick Genitals")
+                if(m == "Lick Penis")
                 {
-                    if( g_config_isMale_b == 1){
-                        sendEmote( n + " bends down in front of " + sOwnerNameInEmote + ", slowly moving their hands to reach " + sOwnerNameInEmote + g_dyn_poss_owner_s + " butt, squeezing it softly with one hand as they grab his cock, slowly licking it up and down while looking at him...");
-                    }
-                    else{
-                        sendEmote( n + " bends down in front of " + sOwnerNameInEmote + ", slowly kissing her lap and then put their mouth on her pussy, licking slowly...");
-                    }
+                    sendEmote( n + " bends down in front of " + sOwnerNameInEmote + ", slowly moving their hands to reach " + sOwnerNameInEmote + g_dyn_poss_owner_s
+                                 + " butt, squeezing it softly with one hand as they grab " + g_dyn_his_s + " cock, slowly licking it up and down while looking at "
+                                 + g_dyn_him_s + "...");
+                }
+                else if(m == "Lick Vagina")
+                {
+                    sendEmote( n + " bends down in front of " + sOwnerNameInEmote + ", slowly kissing " + g_dyn_his_s + " lap and then put their mouth on " + g_dyn_his_s + " pussy, licking slowly...");
                 }
                 else if(m == "Lick Butt")
                 {
