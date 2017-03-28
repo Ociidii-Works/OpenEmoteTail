@@ -609,7 +609,7 @@ default
                 }
                 else if(m == "Play")
                 {
-                    llSay(0,g_cached_ownerDisplayName_s + " swishes " + g_dyn_his_s + " " + g_config_objectType_s + " about. " + n + " grabs it and starts tugging it playfully.");
+                    sendEmote(g_cached_ownerDisplayName_s + " swishes " + g_dyn_his_s + " " + g_config_objectType_s + " about. " + n + " grabs it and starts tugging it playfully.");
                 }
                 else if(m == "Hug")
                 {
