@@ -49,7 +49,7 @@ integer g_config_removeIconInOwnerName_b    = TRUE;
 /////////////////////////////////////////////////////////////////////////
 /// Internal stuff, don't touch unless you know what you're doing! //////
 /////////////////////////////////////////////////////////////////////////
-string g_internal_version_s             = "3.9.0";
+string g_internal_version_s             = "3.9.1";
 string g_internal_repo_s                = "XenHat/OpenEmoteTail";
 key g_internal_httprid_k                = NULL_KEY;
 // 0: none, 1: error , 2: warning, 3: info, 4: debug
@@ -115,7 +115,6 @@ string g_dyn_poss_toucher_s;
 /// Status logic ///
 integer g_status_inUse_b            = FALSE;
 integer g_status_locked_i           = FALSE;
-integer g_status_showUpdateBtn_b    = TRUE;
 
 //// Functions ////
 fSetGender(integer iNewGender)
@@ -317,10 +316,7 @@ xlGenerateMenuData(integer newMenuType_i)
                 dm(LOG_INFO,et,"Is Locked");
                 menu_buttons += ["Unlock"];
             }
-            if (g_status_showUpdateBtn_b)
-            {
-                menu_buttons += ["Check Update"];
-            }
+            menu_buttons += ["Check Update"];
             xlCreateMenu("\nChange " + g_config_objectType_s + " option",menu_buttons);
         }
     }
@@ -690,7 +686,6 @@ default
             +"Your new script(s):\n[https://raw.githubusercontent.com/"+g_internal_repo_s
                 +"/"+new_version_s+"/tailmenu.lsl OpenEmoteTail.lsl]";
             ;
-            g_status_showUpdateBtn_b = FALSE;
         llOwnerSay("["+llGetScriptName()+".lsl] ("+g_internal_version_s + "):\n"+g_cached_updateMsg_s);
         @end;
         llSetMemoryLimit(llGetUsedMemory()+g_internal_memoryLimit_i);
